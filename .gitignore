@@ -1,0 +1,7 @@
+.vscode/
+node_modules/
+
+
+#Exclude tsc generated files
+lib/**/*.map
+lib/**/*.js
