@@ -1,14 +1,23 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import { Request, Response } from 'express';
+import * as mongoose from 'mongoose';
+import { dbURL } from '../config/database';
 
 class App {
 	public app: express.Application;
 	constructor() {
 		this.app = express();
+		this.connectToDB();
 		this.config();
 		this.routes();
 	}
+
+	private connectToDB = () => {
+		mongoose.connect(
+			dbURL,
+			{ useNewUrlParser: true }
+		);
+	};
 
 	private config(): void {
 		this.app.use(bodyParser.json());
@@ -18,13 +27,13 @@ class App {
 	private routes(): void {
 		const router = express.Router();
 
-		router.get('/', (req: Request, res: Response) => {
+		router.get('/', (req: express.Request, res: express.Response) => {
 			res.status(200).send({
 				message: 'Hello World!'
 			});
 		});
 
-		router.post('/', (req: Request, res: Response) => {
+		router.post('/', (req: express.Request, res: express.Response) => {
 			const data = req.body;
 			// query a database and save data
 			res.status(200).send(data);
