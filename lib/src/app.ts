@@ -2,6 +2,7 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 import { dbURL } from '../config/database';
+import { User } from './models/user';
 
 class App {
 	public app: express.Application;
