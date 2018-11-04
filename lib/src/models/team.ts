@@ -1,11 +1,17 @@
-import { Document, Model, model, Schema } from 'mongoose';
+import { Document, Model, model, Schema, Types } from 'mongoose';
 
 export interface ITeamModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
 	name: string;
-	members: string;
-	recipes: string;
+	members: Array<{
+		id: Types.ObjectId;
+		username: string;
+	}>;
+	recipes: Array<{
+		id: Types.ObjectId;
+		name: string;
+	}>;
 }
 
 export let TeamSchema: Schema = new Schema(
@@ -20,9 +26,16 @@ export let TeamSchema: Schema = new Schema(
 				username: String
 			}
 		],
-		recipes: String
+		recipes: [
+			{
+				id: {
+					type: Schema.Types.ObjectId,
+					ref: 'Recipe'
+				}
+			}
+		]
 	},
 	{ timestamps: true }
 );
 
-export const User: Model<ITeamModel> = model<ITeamModel>('Team', TeamSchema);
+export const Team: Model<ITeamModel> = model<ITeamModel>('Team', TeamSchema);

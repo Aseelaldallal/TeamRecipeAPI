@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from 'mongoose';
+import { Document, Model, model, Schema, Types } from 'mongoose';
 
 export interface IUserModel extends Document {
 	createdAt: Date;
@@ -6,8 +6,12 @@ export interface IUserModel extends Document {
 	username: string;
 	firstname: string;
 	lastname: string;
+	password: string;
 	address: string;
-	recipes: string;
+	recipes: Array<{
+		id: Types.ObjectId;
+		name: string;
+	}>;
 }
 
 export let UserSchema: Schema = new Schema(
@@ -15,8 +19,16 @@ export let UserSchema: Schema = new Schema(
 		username: String,
 		firstname: String,
 		lastname: String,
+		password: String,
 		address: String,
-		recipes: String
+		recipes: [
+			{
+				id: {
+					type: Schema.Types.ObjectId,
+					ref: 'Recipe'
+				}
+			}
+		]
 	},
 	{ timestamps: true }
 );
