@@ -2,12 +2,20 @@ import { Document, Model, model, Schema } from 'mongoose';
 
 export interface IUserModel extends Document {
 	createdAt: Date;
+	updatedAt: Date;
+	username: string;
+	firstname: string;
+	lastname: string;
+	address: string;
+	recipes: string;
 }
 
 export let UserSchema: Schema = new Schema(
 	{
+		username: String,
+		firstname: String,
+		lastname: String,
 		address: String,
-		name: String,
 		recipes: String
 	},
 	{ timestamps: true }
