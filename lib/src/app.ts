@@ -3,7 +3,8 @@ import * as express from 'express';
 import * as mongoose from 'mongoose';
 import { dbURL } from '../config/database';
 
-import { router as teamRouter } from './routes/teams';
+import { router as teamRouter } from './routes/team';
+import { router as userRouter } from './routes/user';
 
 class App {
 	public app: express.Application;
@@ -29,9 +30,10 @@ class App {
 	}
 
 	private routes(): void {
-		const router = express.Router();
-		this.app.use('/teams', teamRouter);
-		this.app.use('/', router);
+		// const router = express.Router();
+		this.app.use('/user', userRouter);
+		this.app.use('/team', teamRouter);
+		// this.app.use('/', router);
 	}
 
 	private handleErrors() {
