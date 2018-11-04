@@ -1,18 +1,9 @@
 import { Document, Model, model, Schema, Types } from 'mongoose';
+import { IUser } from '../interfaces/user';
 
-export interface IUserModel extends Document {
+export interface IUserModel extends IUser, Document {
 	createdAt: Date;
 	updatedAt: Date;
-	username: string;
-	firstname: string;
-	lastname: string;
-	password: string;
-	address: string;
-	teams?: Array<{ id: Types.ObjectId }>;
-	recipes?: Array<{
-		id: Types.ObjectId;
-		name: string;
-	}>;
 }
 
 const UserSchema: Schema = new Schema(
