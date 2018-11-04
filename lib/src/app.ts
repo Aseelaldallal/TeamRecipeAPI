@@ -39,12 +39,14 @@ class App {
 	private handleErrors() {
 		// Expand this later
 		this.app.use((err, req, res, next) => {
-			if (err.message === 'access denied') {
-				res.status(403);
-				res.json({ error: err.message });
+			if (err.name === 'ValidationError') {
+				res.status(400);
+				res.json({ error: err.name, message: err.message });
 			}
 			next(err);
 		});
+
+		// Mongoose Validaiton Errors: err.name === Valid
 	}
 }
 

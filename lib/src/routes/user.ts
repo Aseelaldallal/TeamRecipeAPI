@@ -5,7 +5,7 @@
 import * as express from 'express';
 import 'express-async-errors';
 import { IUser } from '../interfaces/user';
-import { IUserModel, User } from '../models/user';
+import { User } from '../models/user';
 
 export const router = express.Router();
 
@@ -47,7 +47,7 @@ router.get('/:id', async (req: express.Request, res: express.Response) => {
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
 
-router.put(':/id', async (req: express.Request, res: express.Response) => {
+router.put('/:id', async (req: express.Request, res: express.Response) => {
 	const user: IUser = {
 		username: req.body.username,
 		firstname: req.body.firstname,
@@ -55,7 +55,9 @@ router.put(':/id', async (req: express.Request, res: express.Response) => {
 		password: req.body.password,
 		address: req.body.address
 	};
-	const updatedUser = await User.create(user);
+	const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
+		new: true
+	});
 	res.json(updatedUser);
 });
 
@@ -63,7 +65,8 @@ router.put(':/id', async (req: express.Request, res: express.Response) => {
 /* -------------DESTROY ROUTE----------- */
 /* ------------------------------------- */
 
-router.delete(':/id', async (req: express.Request, res: express.Response) => {
-	await User.findByIdAndDelete(req.params.id);
+router.delete('/:id', async (req: express.Request, res: express.Response) => {
+	const userToDelete = await User.findById(req.params.id);
+	await userToDelete.remove();
 	res.json({});
 });

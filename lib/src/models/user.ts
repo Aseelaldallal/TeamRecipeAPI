@@ -1,5 +1,6 @@
-import { Document, Model, model, Schema, Types } from 'mongoose';
+import { Document, Model, model, Schema } from 'mongoose';
 import { IUser } from '../interfaces/user';
+import { Recipe } from './recipe';
 
 export interface IUserModel extends IUser, Document {
 	createdAt: Date;
@@ -12,26 +13,16 @@ const UserSchema: Schema = new Schema(
 		firstname: { type: String, required: true },
 		lastname: { type: String, required: true },
 		password: { type: String, required: true },
-		address: { type: String, required: true },
-		teams: [
-			{
-				id: {
-					type: Schema.Types.ObjectId,
-					ref: 'Team'
-				}
-			}
-		],
-		recipes: [
-			{
-				id: {
-					type: Schema.Types.ObjectId,
-					ref: 'Recipe'
-				}
-			}
-		]
+		address: { type: String, required: true }
 	},
 	{ timestamps: true }
 );
+
+UserSchema.post('remove', async function(this: IUserModel) {
+	console.log('Removing User');
+	// ADD : Remove All User Recipes from Recipe Model
+	// await Recipe.remove({ author: { id: this._id } });
+});
 
 export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
 
