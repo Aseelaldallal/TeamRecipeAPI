@@ -38,18 +38,32 @@ router.post('/new', async (req: express.Request, res: express.Response) => {
 /* ---------------SHOW ROUTE------------ */
 /* ------------------------------------- */
 
-/* ------------------------------------- */
-/* ---------------EDIT ROUTE------------ */
-/* ------------------------------------- */
+router.get('/:id', async (req: express.Request, res: express.Response) => {
+	const user = await User.findById(req.params.id);
+	res.json(user);
+});
 
 /* ------------------------------------- */
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
 
+router.put(':/id', async (req: express.Request, res: express.Response) => {
+	const user: IUser = {
+		username: req.body.username,
+		firstname: req.body.firstname,
+		lastname: req.body.lastname,
+		password: req.body.password,
+		address: req.body.address
+	};
+	const updatedUser = await User.create(user);
+	res.json(updatedUser);
+});
+
 /* ------------------------------------- */
 /* -------------DESTROY ROUTE----------- */
 /* ------------------------------------- */
 
-/* ------------------------------------- */
-/* ---------------HELPER---------------- */
-/* ------------------------------------- */
+router.delete(':/id', async (req: express.Request, res: express.Response) => {
+	await User.findByIdAndDelete(req.params.id);
+	res.json({});
+});
