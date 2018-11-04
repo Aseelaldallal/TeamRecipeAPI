@@ -4,33 +4,47 @@ export interface ITeamModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
 	name: string;
+	admin: {
+		id: Types.ObjectId;
+		username: string;
+	};
 	members: Array<{
 		id: Types.ObjectId;
 		username: string;
 	}>;
-	recipes: Array<{
+	recipes?: Array<{
 		id: Types.ObjectId;
 		name: string;
 	}>;
 }
 
-export let TeamSchema: Schema = new Schema(
+const TeamSchema: Schema = new Schema(
 	{
-		name: String,
+		name: { type: String, required: true },
+		admin: {
+			id: {
+				type: Schema.Types.ObjectId,
+				ref: 'User',
+				required: true
+			},
+			username: { type: String, required: true }
+		},
 		members: [
 			{
 				id: {
 					type: Schema.Types.ObjectId,
-					ref: 'User'
+					ref: 'User',
+					required: true
 				},
-				username: String
+				username: { type: String, required: true }
 			}
 		],
 		recipes: [
 			{
 				id: {
 					type: Schema.Types.ObjectId,
-					ref: 'Recipe'
+					ref: 'Recipe',
+					required: true
 				}
 			}
 		]

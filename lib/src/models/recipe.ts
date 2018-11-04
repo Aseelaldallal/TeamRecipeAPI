@@ -1,5 +1,28 @@
 import { Document, Model, model, Schema, Types } from 'mongoose';
 
+export interface IIngredientModel extends Document {
+	name: string;
+	amount: number;
+	unit?: string;
+	calories?: number;
+}
+
+const IngredientSchema: Schema = new Schema({
+	name: { type: String, required: true },
+	amount: {
+		type: Number,
+		required: true,
+		validate: {
+			validator(v) {
+				return v > 0;
+			},
+			message: 'Amount must be greater than 0'
+		}
+	},
+	unit: { type: String },
+	calories: { type: Number }
+});
+
 export interface IRecipeModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
@@ -10,48 +33,30 @@ export interface IRecipeModel extends Document {
 	};
 	ingredients: IIngredientModel[];
 	image: string;
-	visibility: Array<{
+	visibility?: Array<{
 		id: Types.ObjectId;
 		username: string;
 	}>;
-	rating: number;
+	rating?: number;
 }
 
-export interface IIngredientModel extends Document {
-	name: string;
-	amount: number;
-	unit: string;
-	calories: number;
-}
-
-export let RecipeSchema: Schema = new Schema(
+const RecipeSchema: Schema = new Schema(
 	{
-		name: String,
+		name: { type: String, required: true },
 		author: {
 			id: {
 				type: Schema.Types.ObjectId,
-				ref: 'User'
+				ref: 'User',
+				required: true
 			},
-			username: String
+			username: { type: String, required: true }
 		},
-		ingredients: [
-			{
-				name: String,
-				amount: Number,
-				unit: String,
-				calories: Number
-			}
-		],
-		image: String,
-		visibility: [
-			{
-				id: {
-					type: Schema.Types.ObjectId,
-					ref: 'User'
-				}
-			}
-		],
-		rating: Number
+		ingredients: {
+			type: [IngredientSchema],
+			required: true
+		},
+		image: { type: String, required: true },
+		rating: { type: Number }
 	},
 	{ timestamps: true }
 );

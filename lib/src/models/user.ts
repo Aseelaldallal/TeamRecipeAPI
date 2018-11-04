@@ -8,19 +8,28 @@ export interface IUserModel extends Document {
 	lastname: string;
 	password: string;
 	address: string;
-	recipes: Array<{
+	teams?: Array<{ id: Types.ObjectId }>;
+	recipes?: Array<{
 		id: Types.ObjectId;
 		name: string;
 	}>;
 }
 
-export let UserSchema: Schema = new Schema(
+const UserSchema: Schema = new Schema(
 	{
-		username: String,
-		firstname: String,
-		lastname: String,
-		password: String,
-		address: String,
+		username: { type: String, required: true },
+		firstname: { type: String, required: true },
+		lastname: { type: String, required: true },
+		password: { type: String, required: true },
+		address: { type: String, required: true },
+		teams: [
+			{
+				id: {
+					type: Schema.Types.ObjectId,
+					ref: 'Team'
+				}
+			}
+		],
 		recipes: [
 			{
 				id: {
