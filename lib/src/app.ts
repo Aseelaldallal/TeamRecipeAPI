@@ -5,6 +5,7 @@ import { dbURL } from './config/database';
 
 import { router as teamRouter } from './routes/team';
 import { router as userRouter } from './routes/user';
+import { router as authRouter } from './routes/auth';
 
 import { setupStrategies } from './config/passport';
 import * as session from 'express-session';
@@ -48,15 +49,15 @@ class App {
 	}
 
 	private routes(): void {
-		// const router = express.Router();
 		this.app.use('/user', userRouter);
 		this.app.use('/team', teamRouter);
-		// this.app.use('/', router);
+		this.app.use('/', authRouter);
 	}
 
 	private handleErrors() {
 		// Expand this later
 		this.app.use((err, req, res, next) => {
+			console.log('Error: ', err);
 			if (err.name === 'ValidationError') {
 				res.status(400);
 				res.json({ error: err.name, message: err.message });

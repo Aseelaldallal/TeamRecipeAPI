@@ -18,23 +18,6 @@ router.get('/', async (req: express.Request, res: express.Response) => {
 });
 
 /* ------------------------------------- */
-/* -------------CREATE ROUTE------------ */
-/* ------------------------------------- */
-
-router.post('/new', async (req: express.Request, res: express.Response) => {
-	const user = {
-		username: req.body.username,
-		email: req.body.email,
-		firstname: req.body.firstname,
-		lastname: req.body.lastname,
-		password: req.body.password,
-		address: req.body.address
-	};
-	const newUser = await User.create(user);
-	res.json(newUser);
-});
-
-/* ------------------------------------- */
 /* ---------------SHOW ROUTE------------ */
 /* ------------------------------------- */
 

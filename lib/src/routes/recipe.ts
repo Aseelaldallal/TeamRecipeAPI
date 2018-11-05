@@ -4,7 +4,6 @@
 
 import * as express from 'express';
 import 'express-async-errors';
-import { IIngredient, IRecipe } from '../interfaces/recipe';
 import { Recipe } from '../models/recipe';
 
 export const router = express.Router();
