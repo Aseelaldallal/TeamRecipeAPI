@@ -24,6 +24,7 @@ router.get('/', async (req: express.Request, res: express.Response) => {
 router.post('/new', async (req: express.Request, res: express.Response) => {
 	const user = {
 		username: req.body.username,
+		email: req.body.email,
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
 		password: req.body.password,
@@ -49,6 +50,7 @@ router.get('/:id', async (req: express.Request, res: express.Response) => {
 router.put('/:id', async (req: express.Request, res: express.Response) => {
 	const user = {
 		username: req.body.username,
+		email: req.body.email,
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
 		password: req.body.password,

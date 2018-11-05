@@ -4,6 +4,7 @@ import { Recipe } from './recipe';
 export interface IUserModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
+	email: string;
 	username: string;
 	firstname: string;
 	lastname: string;
@@ -13,6 +14,7 @@ export interface IUserModel extends Document {
 
 const UserSchema: Schema = new Schema(
 	{
+		email: { type: String, required: true },
 		username: { type: String, required: true },
 		firstname: { type: String, required: true },
 		lastname: { type: String, required: true },
