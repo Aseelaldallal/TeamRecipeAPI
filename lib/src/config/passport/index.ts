@@ -1,43 +1,42 @@
-// // ====================================
-// // SETUP
-// // ====================================
+// ====================================
+// SETUP
+// ====================================
 
-// // const passport = require('passport');
-// // const User = require('../../models/user');
-// // const LocalStrategy = require('./localstrategy');
-// // const JWTStrategy = require('./jwtstrategy');
+// const passport = require('passport');
+// const User = require('../../models/user');
+// const LocalStrategy = require('./localstrategy');
+// const JWTStrategy = require('./jwtstrategy');
 
-// import * as passport from 'passport';
-// import { User } from '../../models/user';
-// import { IUser } from 'src/interfaces/user';
+import * as passport from 'passport';
+import { User, IUserModel } from '../../models/user';
 
-// // ====================================
-// // SESSIONS
-// // ====================================
+// ====================================
+// SESSIONS
+// ====================================
 
-// // If authentication succeeds, a session will be established and maintained via a cookie set in the
-// // user's browser. Each subsequent request will not contain credentials, but rather the unique cookie that
-// // identifies the session. In order to support login sessions, Passport will serialize and deserialize user instances
-// // instances to and from the session. In the following, only user ID is serialized to the session, keeping the amount
-// // of data stored within teh session small. When subsequent requests are recieved, this ID is used to find the user,
-// // which will be restored to req.user.
+// If authentication succeeds, a session will be established and maintained via a cookie set in the
+// user's browser. Each subsequent request will not contain credentials, but rather the unique cookie that
+// identifies the session. In order to support login sessions, Passport will serialize and deserialize user instances
+// instances to and from the session. In the following, only user ID is serialized to the session, keeping the amount
+// of data stored within teh session small. When subsequent requests are recieved, this ID is used to find the user,
+// which will be restored to req.user.
 
-// passport.serializeUser((user: IUser, done) => {
-// 	done(null, { _id: user._id });
-// });
+passport.serializeUser((user: IUserModel, done) => {
+	done(null, { _id: user._id });
+});
 
-// passport.deserializeUser((id, done) => {
-// 	User.findById(id, function(err, user) {
-// 		done(err, user);
-// 	});
-// });
+passport.deserializeUser((id, done) => {
+	User.findById(id, (err, user: IUserModel) => {
+		done(err, user);
+	});
+});
 
-// // ====================================
-// // REGISTER STRATEGIES
-// // ====================================
+// ====================================
+// REGISTER STRATEGIES
+// ====================================
 
 // passport.use('local-login', LocalStrategy.localLogin);
 // passport.use('local-register', LocalStrategy.localRegister);
 // passport.use('jwt', JWTStrategy.strategy);
 
-// module.exports = passport;
+module.exports = passport;

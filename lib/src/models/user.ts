@@ -2,7 +2,6 @@ import { Document, Model, model, Schema, Types } from 'mongoose';
 import { Recipe } from './recipe';
 
 export interface IUserModel extends Document {
-	id: Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
 	username: string;
