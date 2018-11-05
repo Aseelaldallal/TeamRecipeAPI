@@ -1,4 +1,6 @@
 import { Document, Model, model, Schema, Types } from 'mongoose';
+import * as bcrypt from 'bcrypt-nodejs';
+
 import { Recipe } from './recipe';
 
 export interface IUserModel extends Document {
@@ -24,6 +26,19 @@ const UserSchema: Schema = new Schema(
 	{ timestamps: true }
 );
 
+UserSchema.methods.generateHash = function(password: string) {
+	return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
+};
+
+UserSchema.methods.validPassword = function(password: string) {
+	return bcrypt.compareSync(password, this.password);
+};
+
+UserSchema.pre('save', function(this: IUserModel, next) {
+	this.email = this.email.toLowerCase();
+	next();
+});
+
 UserSchema.post('remove', async function(this: IUserModel) {
 	console.log('Removing User');
 	// ADD : Remove All User Recipes from Recipe Model
@@ -31,12 +46,3 @@ UserSchema.post('remove', async function(this: IUserModel) {
 });
 
 export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
-
-// UserSchema.pre('save', function(next) {
-// 	const user = this as IUserModel;
-// 	const now = new Date();
-// 	if (!user.createdAt) {
-// 		user.createdAt = now;
-// 	}
-// 	next();
-// });
