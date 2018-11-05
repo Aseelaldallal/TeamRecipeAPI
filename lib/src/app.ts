@@ -6,6 +6,10 @@ import { dbURL } from './config/database';
 import { router as teamRouter } from './routes/team';
 import { router as userRouter } from './routes/user';
 
+import { setupStrategies } from './config/passport';
+import * as session from 'express-session';
+import * as passport from 'passport';
+
 class App {
 	public app: express.Application;
 
@@ -17,16 +21,30 @@ class App {
 		this.handleErrors();
 	}
 
-	private connectToDB = () => {
+	private connectToDB(): void {
 		mongoose.connect(
 			dbURL,
 			{ useNewUrlParser: true }
 		);
-	};
+	}
 
 	private config(): void {
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({ extended: false }));
+		this.setupPassport(passport);
+	}
+
+	private setupPassport(cleanPassport: passport.PassportStatic): void {
+		setupStrategies(cleanPassport);
+		this.app.use(
+			session({
+				secret: 'littlecats',
+				saveUninitialized: true,
+				resave: true
+			})
+		);
+		this.app.use(passport.initialize());
+		this.app.use(passport.session());
 	}
 
 	private routes(): void {
@@ -45,8 +63,6 @@ class App {
 			}
 			next(err);
 		});
-
-		// Mongoose Validaiton Errors: err.name === Valid
 	}
 }
 
