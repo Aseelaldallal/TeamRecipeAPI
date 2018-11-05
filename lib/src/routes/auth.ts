@@ -20,8 +20,9 @@ router.post('/register', register);
 
 async function register(req: express.Request, res: express.Response) {
 	const user = await User.findOne({ email: req.body.email.toLowerCase() });
-	if (user) { throw new Error('userExists'); }
-
+	if (user) {
+		throw new Error('userExists');
+	}
 	const newUser = await createAndSaveUser(req);
 	const token = jwt.sign({ id: newUser._id }, jwtSecretOrKey, {
 		expiresIn: '1h'
