@@ -7,20 +7,20 @@ export interface IUserModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
 	email: string;
+	password: string;
 	username: string;
 	firstname: string;
 	lastname: string;
-	password: string;
 	address: string;
 }
 
 const UserSchema: Schema = new Schema(
 	{
 		email: { type: String, required: true },
+		password: { type: String, required: true },
 		username: { type: String, required: true },
 		firstname: { type: String, required: true },
 		lastname: { type: String, required: true },
-		password: { type: String, required: true },
 		address: { type: String, required: true }
 	},
 	{ timestamps: true }
@@ -34,8 +34,8 @@ UserSchema.methods.validPassword = function(password: string) {
 	return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.pre('save', function(this: IUserModel, next) {
-	this.email = this.email.toLowerCase();
+UserSchema.pre('save', function(next) {
+	(this as IUserModel).email = (this as IUserModel).email.toLowerCase();
 	next();
 });
 
