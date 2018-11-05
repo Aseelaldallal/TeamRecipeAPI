@@ -4,7 +4,6 @@
 
 import * as express from 'express';
 import 'express-async-errors';
-import { IUser } from '../interfaces/user';
 import { User } from '../models/user';
 
 export const router = express.Router();
@@ -23,7 +22,7 @@ router.get('/', async (req: express.Request, res: express.Response) => {
 /* ------------------------------------- */
 
 router.post('/new', async (req: express.Request, res: express.Response) => {
-	const user: IUser = {
+	const user = {
 		username: req.body.username,
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
@@ -48,7 +47,7 @@ router.get('/:id', async (req: express.Request, res: express.Response) => {
 /* ------------------------------------- */
 
 router.put('/:id', async (req: express.Request, res: express.Response) => {
-	const user: IUser = {
+	const user = {
 		username: req.body.username,
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,

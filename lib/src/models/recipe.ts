@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema, Types } from 'mongoose';
+import { Document, Model, model, Schema } from 'mongoose';
 import { IIngredient, IRecipe } from '../interfaces/recipe';
 
 export interface IIngredientModel extends IIngredient, Document {}
