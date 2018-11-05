@@ -7,10 +7,13 @@ export function setupStrategies(passport: PassportStatic) {
 		done(null, { _id: user._id });
 	});
 
-	passport.deserializeUser((id, done) => {
-		User.findById(id, (err, user: IUserModel) => {
-			done(err, user);
-		});
+	passport.deserializeUser(async (id, done) => {
+		try {
+			const user = await User.findById(id);
+			done(null, user);
+		} catch (err) {
+			done(err, null);
+		}
 	});
 
 	passport.use('jwt', JWTStrategy);
