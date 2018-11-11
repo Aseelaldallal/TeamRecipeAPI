@@ -55,12 +55,12 @@ class App {
 	}
 
 	private handleErrors() {
-		// Expand this later
 		this.app.use((err, req, res, next) => {
-			console.log('Error: ', err);
 			if (err.name === 'ValidationError') {
-				res.status(400);
-				res.json({ error: err.name, message: err.message });
+				res.status(400).json({ error: err.name, message: err.message });
+			}
+			if (err.name === 'UserExists') {
+				res.status(409).json({ error: err.name, message: err.message });
 			}
 			next(err);
 		});
