@@ -37,7 +37,7 @@ async function register(
 		const newUser = await createAndSaveUser(req);
 		return done(null, newUser);
 	} catch (err) {
-		throw new customError('Unknown', 'Something went wrong', 500);
+		return done(err);
 	}
 }
 
@@ -80,7 +80,7 @@ async function login(email: string, password: string, done: IDone) {
 		}
 		return done(null, user);
 	} catch (err) {
-		throw new customError('Unknown', 'Something went wrong', 500);
+		return done(err);
 	}
 }
 
