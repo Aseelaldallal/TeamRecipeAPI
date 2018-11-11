@@ -36,13 +36,16 @@
 		"build": "tsc",
 		"dev": "ts-node ./lib/src/server.ts",
 		"start": "node ./dist/server.js",
-		"prod": "npm run build && npm start"
+		"prod": "npm run build && npm start",
+		"test": "mocha ./tests --recursive"
 	},
 	"author": "Aseel Al Dallal",
 	"license": "ISC",
 	"devDependencies": {
 		"@types/mongodb": "^3.1.14",
 		"@types/mongoose": "^5.3.0",
+		"chai": "^4.2.0",
+		"mocha": "^5.2.0",
 		"tslint": "^5.11.0",
 		"tslint-config-prettier": "^1.15.0",
 		"tslint-eslint-rules": "^5.4.0"
