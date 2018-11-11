@@ -22,10 +22,16 @@ export const router = express.Router();
 
 router.post('/register', register);
 
-async function register(req: express.Request, res: express.Response) {
-	const user = await User.findOne({ email: req.body.email.toLowerCase() });
+async function register(
+	req: express.Request,
+	res: express.Response
+): Promise<void> {
+	const email = req.body.email.toLowerCase();
+	const user = await User.findOne({ email });
 	if (user) {
-		throw new Error('userExists');
+		const error = new Error(`The email ${email} is already registered`);
+		error.name = 'UserExists';
+		throw error;
 	}
 	const newUser = await createAndSaveUser(req);
 	const token = jwt.sign({ id: newUser._id }, jwtSecretOrKey, {
@@ -54,9 +60,14 @@ async function createAndSaveUser(req: express.Request): Promise<IUserModel> {
 // Login
 // ===============================================
 
-router.post('/login', login);
+// router.post('/login', login);
 
-async function login() {}
+// async function login(req: express.Request, res: express.Response): Promise<void> {
+//     const email = req.body.email.toLowerCase();
+//     const user = await User.findOne({email});
+//     if(!)
+
+// }
 
 // router.post(
 //   '/login',

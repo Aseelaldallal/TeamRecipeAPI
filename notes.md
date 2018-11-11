@@ -5,3 +5,8 @@ TypeScript and Mongoose: https://brianflove.com/2016/10/04/typescript-declaring-
 Mongoose Types: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mongoose
 
 Microsoft TypeScript Express Sample: https://github.com/Microsoft/TypeScript-Node-Starter#typescript-node-starter
+
+To Do:
+
+-- Handle Expiry Tokens
+-- Delete Routes -- in model

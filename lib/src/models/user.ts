@@ -1,8 +1,6 @@
 import { Document, Model, model, Schema, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
 
-import { Recipe } from './recipe';
-
 export interface IUserModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
