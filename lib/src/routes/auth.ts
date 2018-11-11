@@ -14,8 +14,6 @@ import { secretOrKey } from '../config/passport/jwtStrategy';
 import * as jwt from 'jsonwebtoken';
 import { User, IUserModel } from '../models/user';
 
-const jwtSecretOrKey = 'blooper';
-
 export const router = Router();
 
 // ===============================================

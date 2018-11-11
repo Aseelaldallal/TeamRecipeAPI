@@ -9,6 +9,7 @@ import { router as authRouter } from './routes/auth';
 
 import { passport } from './config/passport';
 import * as session from 'express-session';
+import { customError } from './shared/Error';
 
 class App {
 	public app: express.Application;
@@ -54,11 +55,10 @@ class App {
 
 	private handleErrors() {
 		this.app.use((err, req, res, next) => {
-			if (err.name === 'ValidationError') {
+			if (err.code) {
+				res.status(err.code).json({ error: err.name, message: err.message });
+			} else if (err.name === 'ValidationError') {
 				res.status(400).json({ error: err.name, message: err.message });
-			}
-			if (err.name === 'UserExists') {
-				res.status(409).json({ error: err.name, message: err.message });
 			}
 			next(err);
 		});

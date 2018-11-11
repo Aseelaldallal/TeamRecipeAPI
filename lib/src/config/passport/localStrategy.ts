@@ -5,6 +5,7 @@ import {
 	IVerifyOptions,
 	IStrategyOptionsWithRequest
 } from 'passport-local';
+import { customError } from '../../shared/Error';
 
 type IDone = (error: any, user?: any, options?: IVerifyOptions) => void;
 
@@ -29,9 +30,11 @@ async function register(
 	try {
 		const user = await User.findOne({ email });
 		if (user) {
-			const error = new Error(`The email ${email} is already registered`);
-			error.name = 'UserExists';
-			throw error;
+			throw new customError(
+				'UserExists',
+				`The email ${email} is already registered`,
+				209
+			);
 		}
 		const newUser = await createAndSaveUser(req);
 		return done(null, newUser);
