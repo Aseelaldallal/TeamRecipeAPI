@@ -1,11 +1,4 @@
-import {
-	Document,
-	Model,
-	model,
-	Schema,
-	Types,
-	HookNextFunction
-} from 'mongoose';
+import { Document, Model, model, Schema, HookNextFunction } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
 
 export interface IUserModel extends Document {
