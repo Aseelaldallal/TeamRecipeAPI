@@ -1,7 +1,11 @@
-import { Document, Model, model, Schema } from 'mongoose';
-import { IIngredient, IRecipe } from '../interfaces/recipe';
+import { Document, Model, model, Schema, Types } from 'mongoose';
 
-export interface IIngredientModel extends IIngredient, Document {}
+export interface IIngredientModel extends Document {
+	name: string;
+	amount: number;
+	unit: string;
+	calories: number;
+}
 
 const IngredientSchema: Schema = new Schema({
 	name: { type: String, required: true },
@@ -19,9 +23,17 @@ const IngredientSchema: Schema = new Schema({
 	calories: { type: Number }
 });
 
-export interface IRecipeModel extends IRecipe, Document {
+export interface IRecipeModel extends Document {
 	createdAt: Date;
 	updatedAt: Date;
+	name: string;
+	author: {
+		id: Types.ObjectId;
+		username: string;
+	};
+	ingredients: IIngredientModel[];
+	image: string;
+	rating: number;
 }
 
 const RecipeSchema: Schema = new Schema(
