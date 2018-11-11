@@ -36,37 +36,6 @@ router.post(
 	}
 );
 
-// async function register(req: Request, res: Response): Promise<void> {
-// 	const email = req.body.email.toLowerCase();
-// 	const user = await User.findOne({ email });
-// 	if (user) {
-// 		const error = new Error(`The email ${email} is already registered`);
-// 		error.name = 'UserExists';
-// 		throw error;
-// 	}
-// 	const newUser = await createAndSaveUser(req);
-// 	const token = jwt.sign({ id: newUser._id }, jwtSecretOrKey, {
-// 		expiresIn: '1h'
-// 	});
-// 	const expiry = 3600; // 1hr
-// 	res.status(200).json({
-// 		token,
-// 		expiry
-// 	});
-// }
-
-// async function createAndSaveUser(req: Request): Promise<IUserModel> {
-// 	const newUser = new User({
-// 		email: req.body.email,
-// 		password: req.body.password,
-// 		username: req.body.username,
-// 		firstname: req.body.firstname,
-// 		lastname: req.body.lastname,
-// 		address: req.body.address
-// 	});
-// 	return newUser.save();
-// }
-
 // ===============================================
 // Login
 // ===============================================

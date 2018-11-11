@@ -3,7 +3,8 @@ import { User, IUserModel } from '../../models/user';
 import {
 	Strategy as LocalStrategy,
 	IVerifyOptions,
-	IStrategyOptionsWithRequest
+	IStrategyOptionsWithRequest,
+	IStrategyOptions
 } from 'passport-local';
 import { customError } from '../../shared/Error';
 
@@ -58,7 +59,10 @@ export const localRegister = new LocalStrategy(registerOptions, register);
 // Local Login
 // ===============================================
 
-const loginOptions = { usernameField: 'email', passwordField: 'password' };
+const loginOptions: IStrategyOptions = {
+	usernameField: 'email',
+	passwordField: 'password'
+};
 
 async function login(email: string, password: string, done: IDone) {
 	if (email) {
