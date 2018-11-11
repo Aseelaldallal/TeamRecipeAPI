@@ -7,9 +7,8 @@ import { router as teamRouter } from './routes/team';
 import { router as userRouter } from './routes/user';
 import { router as authRouter } from './routes/auth';
 
-import { setupStrategies } from './config/passport';
+import { passport } from './config/passport';
 import * as session from 'express-session';
-import * as passport from 'passport';
 
 class App {
 	public app: express.Application;
@@ -32,11 +31,10 @@ class App {
 	private config(): void {
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({ extended: false }));
-		this.setupPassport(passport);
+		this.setupPassport();
 	}
 
-	private setupPassport(cleanPassport: passport.PassportStatic): void {
-		setupStrategies(cleanPassport);
+	private setupPassport(): void {
 		this.app.use(
 			session({
 				secret: 'littlecats',

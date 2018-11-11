@@ -1,9 +1,11 @@
 import { User } from '../../models/user';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 
+export const secretOrKey = 'blooper';
+
 const jwtOptions = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-	secretOrKey: 'blooper'
+	secretOrKey
 };
 
 export const JWTStrategy = new Strategy(

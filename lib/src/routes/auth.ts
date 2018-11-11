@@ -8,53 +8,66 @@
 // const router = express.Router();
 // const middleware = require('../middleware');
 
-import * as express from 'express';
+import { Router, Request, Response } from 'express';
+import { passport } from '../config/passport';
+import { secretOrKey } from '../config/passport/jwtStrategy';
 import * as jwt from 'jsonwebtoken';
 import { User, IUserModel } from '../models/user';
 
 const jwtSecretOrKey = 'blooper';
 
-export const router = express.Router();
+export const router = Router();
 
 // ===============================================
 // Register
 // ===============================================
 
-router.post('/register', register);
-
-async function register(
-	req: express.Request,
-	res: express.Response
-): Promise<void> {
-	const email = req.body.email.toLowerCase();
-	const user = await User.findOne({ email });
-	if (user) {
-		const error = new Error(`The email ${email} is already registered`);
-		error.name = 'UserExists';
-		throw error;
+router.post(
+	'/register',
+	passport.authenticate('local-register'),
+	(req: Request, res: Response) => {
+		const user = req.user;
+		const token = jwt.sign({ id: user.id }, secretOrKey, {
+			expiresIn: '1h'
+		});
+		const expiry = 3600; // 1hr
+		res.status(200).json({
+			token,
+			expiry
+		});
 	}
-	const newUser = await createAndSaveUser(req);
-	const token = jwt.sign({ id: newUser._id }, jwtSecretOrKey, {
-		expiresIn: '1h'
-	});
-	const expiry = 3600; // 1hr
-	res.status(200).json({
-		token,
-		expiry
-	});
-}
+);
 
-async function createAndSaveUser(req: express.Request): Promise<IUserModel> {
-	const newUser = new User({
-		email: req.body.email,
-		password: req.body.password,
-		username: req.body.username,
-		firstname: req.body.firstname,
-		lastname: req.body.lastname,
-		address: req.body.address
-	});
-	return newUser.save();
-}
+// async function register(req: Request, res: Response): Promise<void> {
+// 	const email = req.body.email.toLowerCase();
+// 	const user = await User.findOne({ email });
+// 	if (user) {
+// 		const error = new Error(`The email ${email} is already registered`);
+// 		error.name = 'UserExists';
+// 		throw error;
+// 	}
+// 	const newUser = await createAndSaveUser(req);
+// 	const token = jwt.sign({ id: newUser._id }, jwtSecretOrKey, {
+// 		expiresIn: '1h'
+// 	});
+// 	const expiry = 3600; // 1hr
+// 	res.status(200).json({
+// 		token,
+// 		expiry
+// 	});
+// }
+
+// async function createAndSaveUser(req: Request): Promise<IUserModel> {
+// 	const newUser = new User({
+// 		email: req.body.email,
+// 		password: req.body.password,
+// 		username: req.body.username,
+// 		firstname: req.body.firstname,
+// 		lastname: req.body.lastname,
+// 		address: req.body.address
+// 	});
+// 	return newUser.save();
+// }
 
 // ===============================================
 // Login
@@ -62,11 +75,20 @@ async function createAndSaveUser(req: express.Request): Promise<IUserModel> {
 
 // router.post('/login', login);
 
-// async function login(req: express.Request, res: express.Response): Promise<void> {
-//     const email = req.body.email.toLowerCase();
-//     const user = await User.findOne({email});
-//     if(!)
-
+// async function login(req: Request, res: Response): Promise<void> {
+// 	const email = req.body.email.toLowerCase();
+// 	const user = await User.findOne({ email });
+// 	if (!user) {
+// 		const error = new Error(`No user with email ${email} exists`);
+// 		error.name = 'UserNotRegistered';
+// 		throw error;
+// 	}
+// 	if (user.validPassword(req.body.password)) {
+// 		// let token = jwt.sign({ id: foundUser._id }, jwt_secretOrKey, {
+// 		//             expiresIn: '1h'
+// 		//           });
+// 		//           let expiry = 3600; // expiry
+// 	}
 // }
 
 // router.post(

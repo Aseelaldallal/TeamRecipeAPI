@@ -1,4 +1,11 @@
-import { Document, Model, model, Schema, Types } from 'mongoose';
+import {
+	Document,
+	Model,
+	model,
+	Schema,
+	Types,
+	HookNextFunction
+} from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
 
 export interface IUserModel extends Document {
@@ -26,21 +33,18 @@ const UserSchema: Schema = new Schema(
 	{ timestamps: true }
 );
 
-UserSchema.methods.generateHash = function(password: string) {
-	return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
-};
-
 UserSchema.methods.validPassword = function(password: string) {
 	return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.pre('save', function(next) {
-	(this as IUserModel).email = (this as IUserModel).email.toLowerCase();
+UserSchema.pre('save', function(this: IUserModel, next: HookNextFunction) {
+	this.email = this.email.toLowerCase();
+	this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8));
 	next();
 });
 
 UserSchema.post('remove', async function(this: IUserModel) {
-	console.log('Removing User');
+	// console.log('Removing User');
 	// ADD : Remove All User Recipes from Recipe Model
 	// await Recipe.remove({ author: { id: this._id } });
 });
