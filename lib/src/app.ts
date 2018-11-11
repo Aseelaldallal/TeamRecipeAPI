@@ -9,7 +9,7 @@ import { router as authRouter } from './routes/auth';
 
 import { passport } from './config/passport';
 import * as session from 'express-session';
-import { customError } from './shared/Error';
+import { CustomError } from './shared/Error';
 
 class App {
 	public app: express.Application;

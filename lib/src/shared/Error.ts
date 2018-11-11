@@ -1,4 +1,4 @@
-export const customError = function(
+export const CustomError = function(
 	name: string,
 	message: string,
 	responseCode: number

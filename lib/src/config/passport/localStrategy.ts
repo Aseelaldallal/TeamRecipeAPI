@@ -6,7 +6,7 @@ import {
 	IStrategyOptionsWithRequest,
 	IStrategyOptions
 } from 'passport-local';
-import { customError } from '../../shared/Error';
+import { CustomError } from '../../shared/Error';
 
 type IDone = (error: any, user?: any, options?: IVerifyOptions) => void;
 
@@ -32,7 +32,7 @@ async function register(
 		const user = await User.findOne({ email });
 		if (user) {
 			const msg = `The email ${email} is already registered`;
-			throw new customError('UserExists', msg, 209);
+			throw new CustomError('UserExists', msg, 209);
 		}
 		const newUser = await createAndSaveUser(req);
 		return done(null, newUser);
@@ -72,11 +72,11 @@ async function login(email: string, password: string, done: IDone) {
 		const user = await User.findOne({ email });
 		if (!user) {
 			const msg = `${email} is not registered`;
-			throw new customError('InvalidCredentials', msg, 401);
+			throw new CustomError('InvalidCredentials', msg, 401);
 		}
 		if (!user.validPassword(password)) {
 			const msg = `Invalid Password`;
-			throw new customError('InvalidCredentials', msg, 401);
+			throw new CustomError('InvalidCredentials', msg, 401);
 		}
 		return done(null, user);
 	} catch (err) {
