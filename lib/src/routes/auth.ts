@@ -16,6 +16,10 @@ const jwtSecretOrKey = 'blooper';
 
 export const router = express.Router();
 
+// ===============================================
+// Register
+// ===============================================
+
 router.post('/register', register);
 
 async function register(req: express.Request, res: express.Response) {
@@ -30,8 +34,7 @@ async function register(req: express.Request, res: express.Response) {
 	const expiry = 3600; // 1hr
 	res.status(200).json({
 		token,
-		expiry,
-		...newUser
+		expiry
 	});
 }
 
@@ -50,6 +53,10 @@ async function createAndSaveUser(req: express.Request): Promise<IUserModel> {
 // ===============================================
 // Login
 // ===============================================
+
+router.post('/login', login);
+
+async function login() {}
 
 // router.post(
 //   '/login',
@@ -88,9 +95,3 @@ async function createAndSaveUser(req: express.Request): Promise<IUserModel> {
 // router.get('/logout', (req, res) => {
 //     res.send('logout');
 // });
-
-// ===============================================
-// Export
-// ===============================================
-
-module.exports = router;
