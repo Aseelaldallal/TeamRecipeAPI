@@ -10,6 +10,8 @@ export interface IUserModel extends Document {
 	firstname: string;
 	lastname: string;
 	address: string;
+	generateHash: (password: string) => string;
+	validPassword: (password: string) => boolean;
 }
 
 const UserSchema: Schema = new Schema(
