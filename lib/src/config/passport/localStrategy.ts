@@ -30,16 +30,13 @@ async function register(
 	try {
 		const user = await User.findOne({ email });
 		if (user) {
-			throw new customError(
-				'UserExists',
-				`The email ${email} is already registered`,
-				209
-			);
+			const msg = `The email ${email} is already registered`;
+			throw new customError('UserExists', msg, 209);
 		}
 		const newUser = await createAndSaveUser(req);
 		return done(null, newUser);
 	} catch (err) {
-		return done(err);
+		throw new customError('Unknown', 'Something went wrong', 500);
 	}
 }
 
@@ -70,13 +67,16 @@ async function login(email: string, password: string, done: IDone) {
 	try {
 		const user = await User.findOne({ email });
 		if (!user) {
-			return done(null, false, { message: 'Incorrect username' });
+			const msg = `${email} is not registered`;
+			throw new customError('InvalidCredentials', msg, 401);
 		}
 		if (!user.validPassword(password)) {
-			return done(null, false, { message: 'Incorrect password' });
+			const msg = `Invalid Password`;
+			throw new customError('InvalidCredentials', msg, 401);
 		}
+		return done(null, user);
 	} catch (err) {
-		return done(err);
+		throw new customError('Unknown', 'Something went wrong', 500);
 	}
 }
 
