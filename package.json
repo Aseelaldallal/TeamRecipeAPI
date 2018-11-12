@@ -9,6 +9,7 @@
 		"@types/body-parser": "^1.17.0",
 		"@types/express": "^4.16.0",
 		"@types/express-session": "^1.15.11",
+		"@types/joi": "^14.0.0",
 		"@types/jsonwebtoken": "^8.3.0",
 		"@types/passport": "^0.4.7",
 		"@types/passport-facebook": "^2.1.8",
@@ -37,14 +38,17 @@
 		"dev": "ts-node ./lib/src/server.ts",
 		"start": "node ./dist/server.js",
 		"prod": "npm run build && npm start",
-		"test": "mocha ./tests --recursive"
+		"test": "mocha -r ts-node/register lib/tests/**/*.spec.ts"
 	},
 	"author": "Aseel Al Dallal",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/chai-http": "^3.0.5",
+		"@types/mocha": "^5.2.5",
 		"@types/mongodb": "^3.1.14",
 		"@types/mongoose": "^5.3.0",
 		"chai": "^4.2.0",
+		"chai-http": "^4.2.0",
 		"mocha": "^5.2.0",
 		"tslint": "^5.11.0",
 		"tslint-config-prettier": "^1.15.0",

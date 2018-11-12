@@ -2,17 +2,10 @@
 // SETUP
 // ===============================================
 
-// const passport = require('../config/passport'); // index.js
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/user');
-// const router = express.Router();
-// const middleware = require('../middleware');
-
 import { Router, Request, Response } from 'express';
 import { passport } from '../config/passport';
 import { secretOrKey } from '../config/passport/jwtStrategy';
 import * as JWT from 'jsonwebtoken';
-
 export const router = Router();
 
 // ===============================================

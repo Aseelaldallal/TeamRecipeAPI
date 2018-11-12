@@ -60,7 +60,7 @@ class App {
 			} else if (err.name === 'ValidationError') {
 				res.status(400).json({ error: err.name, message: err.message });
 			}
-			next(err);
+			next();
 		});
 	}
 }
