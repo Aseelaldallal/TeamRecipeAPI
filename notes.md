@@ -11,3 +11,27 @@ To Do:
 -- Handle Expiry Tokens
 -- Delete Routes -- in model
 -- Validation Errors - When
+
+Sunday, Nov 11
+
+- Login, Register Done and Tested
+
+What to do next?
+
+- Implement User Remove in Model
+- Write unit tests for user routes
+- Write Unit tests for teams
+- Write unit tests for recipes
+- Implement team remove in model
+- Implement recipe remove in model
+- Add validation middleware to express routes
+
+Removing User
+— Removing teams that have user as admin
+— Removing recipes are created by user
+
+Removing Recipes
+Removing the recipe from team
+
+Removing Team
+Nothing

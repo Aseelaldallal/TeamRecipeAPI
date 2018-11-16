@@ -1,6 +1,5 @@
 import { User } from '../../models/user';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { CustomError } from '../../shared/Error';
 
 export const secretOrKey = 'blooper';
 

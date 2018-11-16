@@ -1,8 +1,6 @@
 import { Document, Model, model, Schema, Types } from 'mongoose';
 
-export interface ITeamModel extends Document {
-	createdAt: Date;
-	updatedAt: Date;
+export interface ITeam {
 	name: string;
 	admin: {
 		id: Types.ObjectId;
@@ -16,6 +14,10 @@ export interface ITeamModel extends Document {
 		id: Types.ObjectId;
 		name: string;
 	}>;
+}
+export interface ITeamModel extends ITeam, Document {
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 const TeamSchema: Schema = new Schema(
