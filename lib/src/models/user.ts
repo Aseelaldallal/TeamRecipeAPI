@@ -1,5 +1,6 @@
 import { Document, Model, model, Schema, HookNextFunction } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
+import { Team } from './team';
 
 export interface IUserModel extends Document {
 	createdAt: Date;
@@ -37,9 +38,10 @@ UserSchema.pre('save', function(this: IUserModel, next: HookNextFunction) {
 });
 
 UserSchema.post('remove', async function(this: IUserModel) {
-	// console.log('Removing User');
-	// ADD : Remove All User Recipes from Recipe Model
-	// await Recipe.remove({ author: { id: this._id } });
+	// 	console.log('Removing User');
+	//     — Removing teams that have user as admin
+	// — Removing recipes are created by user
+	// Remove user from teams
 });
 
 export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
