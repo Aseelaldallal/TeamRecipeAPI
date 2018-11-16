@@ -9,7 +9,6 @@ import { router as authRouter } from './routes/auth';
 
 import { passport } from './config/passport';
 import * as session from 'express-session';
-import { CustomError } from './shared/Error';
 
 class App {
 	public app: express.Application;
@@ -59,6 +58,8 @@ class App {
 				res.status(err.code).json({ error: err.name, message: err.message });
 			} else if (err.name === 'ValidationError') {
 				res.status(400).json({ error: err.name, message: err.message });
+			} else {
+				res.status(500).json({ error: err.name, message: err.message });
 			}
 			next();
 		});
