@@ -1,5 +1,6 @@
 import { User } from '../../models/user';
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { CustomError } from '../../shared/Error';
 
 export const secretOrKey = 'blooper';
 
@@ -12,10 +13,10 @@ export const JWTStrategy = new Strategy(
 	jwtOptions,
 	async (jwtPayload, next) => {
 		try {
-			const user = await User.findOne({ _id: jwtPayload.id });
+			const user = await User.findOne({ _id: jwtPayload });
 			next(null, user);
 		} catch (error) {
-			throw new Error('JWT Strategy Error');
+			next(error);
 		}
 	}
 );
