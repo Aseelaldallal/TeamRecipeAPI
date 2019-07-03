@@ -37,11 +37,7 @@ router.patch(
 	passport.authenticate('jwt', { session: false }),
 	async (req: express.Request, res: express.Response) => {
 		if (req.body.email) {
-			throw new CustomError(
-				'BadRequest',
-				'Cannot change user email address',
-				401
-			);
+			throw new CustomError('BadRequest', 'Cannot change user email address', 401);
 		}
 		const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
 			new: true
