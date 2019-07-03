@@ -7,7 +7,7 @@ import 'express-async-errors';
 import { passport } from '../config/passport';
 import { Team, ITeamModel, ITeam } from '../models/team';
 import { IUserModel } from '../models/user';
-import { CustomError } from 'src/shared/Error';
+import { CustomError } from '../shared/Error';
 
 export const router = express.Router();
 
