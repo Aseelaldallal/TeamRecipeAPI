@@ -1,4 +1,3 @@
-import * as mocha from 'mocha';
 import app from '../../src/app';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
@@ -26,8 +25,20 @@ describe('POST /register', () => {
 			.type('form')
 			.send({ email, password });
 		expect(response.status).to.equal(400);
-		expect(response.error.text).to.equal('Bad Request');
+		expect(response.body.error).to.equal('ValidationError');
 	});
+
+	// it('Malformed Email Returns 400 - Bad Request', async () => {
+	// 	const email = 'abcdefg';
+	// 	const password = 'password';
+	// 	const response = await chai
+	// 		.request(app)
+	// 		.post('/register')
+	// 		.type('form')
+	// 		.send({ email, password });
+	// 	expect(response.status).to.equal(400);
+	// 	expect(response.error.text).to.equal('Bad Request');
+	// });
 
 	it('Creates a user and returns a token', async () => {
 		const response = await chai
@@ -74,17 +85,17 @@ describe('POST /login', () => {
 		expect(response.error.text).to.equal('Bad Request');
 	});
 
-	it('Malformed Email Returns 400 - Bad Request', async () => {
-		const email = 'abcdefg';
-		const password = 'password';
-		const response = await chai
-			.request(app)
-			.post('/login')
-			.type('form')
-			.send({ email, password });
-		expect(response.status).to.equal(400);
-		expect(response.error.text).to.equal('Bad Request');
-	});
+	// it('Malformed Email Returns 400 - Bad Request', async () => {
+	// 	const email = 'abcdefg';
+	// 	const password = 'password';
+	// 	const response = await chai
+	// 		.request(app)
+	// 		.post('/login')
+	// 		.type('form')
+	// 		.send({ email, password });
+	// 	expect(response.status).to.equal(400);
+	// 	expect(response.error.text).to.equal('Bad Request');
+	// });
 
 	it('Non Existant Username Retuns 401 - Invalid Credentials', async () => {
 		const email = `${Math.random()}@gmail.com`;
