@@ -21,12 +21,7 @@ const registerOptions: IStrategyOptionsWithRequest = {
 	passReqToCallback: true
 };
 
-async function register(
-	req: Request,
-	email: string,
-	password: string,
-	done: IDone
-) {
+async function register(req: Request, email: string, password: string, done: IDone) {
 	email = email ? email.toLocaleLowerCase() : null;
 	try {
 		const user = await User.findOne({ email });
