@@ -1,5 +1,6 @@
 import { Document, Model, model, Schema, HookNextFunction } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
+import * as faker from 'faker';
 
 export interface IUserModel extends Document {
 	createdAt: Date;
@@ -25,6 +26,17 @@ const UserSchema: Schema = new Schema(
 	},
 	{ timestamps: true }
 );
+
+UserSchema.statics.createDummy = function() {
+	return {
+		email: faker.internet.email(),
+		password: 'password',
+		username: faker.internet.userName(),
+		firstname: faker.name.firstName(),
+		lastname: faker.name.lastName(),
+		address: faker.address.streetAddress()
+	};
+};
 
 UserSchema.methods.validPassword = function(password: string) {
 	return bcrypt.compareSync(password, this.password);
