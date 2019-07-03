@@ -22,10 +22,7 @@ class App {
 	}
 
 	private connectToDB(): void {
-		mongoose.connect(
-			dbURL,
-			{ useNewUrlParser: true }
-		);
+		mongoose.connect(dbURL, { useNewUrlParser: true });
 	}
 
 	private config(): void {

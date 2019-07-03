@@ -1,6 +1,5 @@
 import { Document, Model, model, Schema, HookNextFunction } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
-import { Team } from './team';
 
 export interface IUserModel extends Document {
 	createdAt: Date;
