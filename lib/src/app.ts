@@ -50,16 +50,18 @@ class App {
 	}
 
 	private handleErrors() {
-		this.app.use((err, req, res, next) => {
-			if (err.code) {
-				res.status(err.code).json({ error: err.name, message: err.message });
-			} else if (err.name === 'ValidationError') {
-				res.status(400).json({ error: err.name, message: err.message });
-			} else {
-				res.status(500).json({ error: err.name, message: err.message });
+		this.app.use(
+			(err: any, req: express.Request, res: express.Response, next: Function) => {
+				if (err.code) {
+					res.status(err.code).json({ error: err.name, message: err.message });
+				} else if (err.name === 'ValidationError') {
+					res.status(400).json({ error: err.name, message: err.message });
+				} else {
+					res.status(500).json({ error: err.name, message: err.message });
+				}
+				next();
 			}
-			next();
-		});
+		);
 	}
 }
 
