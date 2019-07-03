@@ -4,7 +4,9 @@
 
 import * as express from 'express';
 import 'express-async-errors';
+import { passport } from '../config/passport';
 import { User } from '../models/user';
+import { CustomError } from '../shared/Error';
 
 export const router = express.Router();
 
@@ -30,20 +32,23 @@ router.get('/:id', async (req: express.Request, res: express.Response) => {
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
 
-router.put('/:id', async (req: express.Request, res: express.Response) => {
-	const user = {
-		username: req.body.username,
-		email: req.body.email,
-		firstname: req.body.firstname,
-		lastname: req.body.lastname,
-		password: req.body.password,
-		address: req.body.address
-	};
-	const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
-		new: true
-	});
-	res.json(updatedUser);
-});
+router.patch(
+	'/:id',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		if (req.body.email) {
+			throw new CustomError(
+				'BadRequest',
+				'Cannot change user email address',
+				401
+			);
+		}
+		const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+			new: true
+		});
+		res.json(updatedUser);
+	}
+);
 
 /* ------------------------------------- */
 /* -------------DESTROY ROUTE----------- */
