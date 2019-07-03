@@ -54,4 +54,8 @@ const TeamSchema: Schema = new Schema(
 	{ timestamps: true }
 );
 
+// prior to save check that admin is a valid user
+// check that members are valid users
+// check that recipes are valid recipes
+
 export const Team: Model<ITeamModel> = model<ITeamModel>('Team', TeamSchema);
