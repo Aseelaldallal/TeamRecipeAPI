@@ -42,20 +42,30 @@ router.post(
 );
 
 /* ------------------------------------- */
-/* ---------------NEW ROUTE------------- */
-/* ------------------------------------- */
-
-/* ------------------------------------- */
 /* ---------------SHOW ROUTE------------ */
 /* ------------------------------------- */
 
-/* ------------------------------------- */
-/* ---------------EDIT ROUTE------------ */
-/* ------------------------------------- */
+router.get('/:id', async (req: express.Request, res: express.Response) => {
+	const team = await Team.findById(req.params.id);
+	res.json(team);
+});
 
 /* ------------------------------------- */
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
+
+// Only logged in admin can edit team
+// We can change the name of the team
+// We can change the admin of the team --> has to be a valid user
+	 // New admin has to be a valid user
+	 // New admin has to be part of team already
+	 // Must remove old admin and put him in team
+	 // Must remove new admin from team and put him in admin
+// We can add/remove team members 
+// We can add/remove recipes
+router.put('/:id', async (req: express.Request, res: express.Response) => {
+
+});
 
 /* ------------------------------------- */
 /* -------------DESTROY ROUTE----------- */
