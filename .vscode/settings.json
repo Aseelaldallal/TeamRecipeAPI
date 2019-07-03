@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
   "prettier.singleQuote": true,
+  "prettier.printWidth": 90,
   "prettier.tslintIntegration": true
 }
