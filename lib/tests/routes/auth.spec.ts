@@ -1,19 +1,35 @@
 import app from '../../src/app';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
-import { User } from '../../src/models/user';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import * as mongoose from 'mongoose';
+import { IUser } from 'src/models/user';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-const newUser = {
-	email: 'testuser@gmail.com',
-	password: 'password',
-	username: 'username',
-	firstname: 'firstname',
-	lastname: 'lastname',
-	address: 'address'
-};
+let mongoServer: MongoMemoryServer;
+let newUser: IUser;
+
+before(async () => {
+	mongoServer = new MongoMemoryServer();
+	const mongoUri = await mongoServer.getConnectionString();
+	await mongoose.connect(mongoUri, { useNewUrlParser: true });
+
+	newUser = {
+		email: 'testuser@gmail.com',
+		password: 'password',
+		username: 'username',
+		firstname: 'firstname',
+		lastname: 'lastname',
+		address: 'address'
+	};
+});
+
+after(() => {
+	mongoose.disconnect();
+	mongoServer.stop();
+});
 
 describe('POST /register', () => {
 	it('Missing required fields results in 400 Bad Request', async () => {
@@ -132,8 +148,4 @@ describe('POST /login', () => {
 		expect(response.status).to.equal(200);
 		expect(response.body).includes.all.keys(['token', 'expiry']);
 	});
-});
-
-after(async () => {
-	await User.remove({ email: newUser.email });
 });
