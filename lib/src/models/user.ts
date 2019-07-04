@@ -11,11 +11,15 @@ export interface IUser {
 	address: string;
 }
 
-export interface IUserModel extends Document, IUser {
+export interface IUserDocument extends Document, IUser {
 	createdAt: Date;
 	updatedAt: Date;
 	generateHash: (password: string) => string;
 	validPassword: (password: string) => boolean;
+}
+
+export interface IUserModel extends Model<IUserDocument> {
+	createDummy: () => IUser;
 }
 
 const UserSchema: Schema = new Schema(
@@ -45,17 +49,17 @@ UserSchema.methods.validPassword = function(password: string) {
 	return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.pre('save', function(this: IUserModel, next: HookNextFunction) {
+UserSchema.pre('save', function(this: IUserDocument, next: HookNextFunction) {
 	this.email = this.email.toLowerCase();
 	this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8));
 	next();
 });
 
-UserSchema.post('remove', async function(this: IUserModel) {
+UserSchema.post('remove', async function(this: IUserDocument) {
 	// 	console.log('Removing User');
 	//     — Removing teams that have user as admin
 	// — Removing recipes are created by user
 	// Remove user from teams
 });
 
-export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
+export const User: IUserModel = model<IUserDocument, IUserModel>('User', UserSchema);
