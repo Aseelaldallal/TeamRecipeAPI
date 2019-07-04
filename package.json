@@ -27,7 +27,7 @@
     "dev": "ts-node ./lib/src/server.ts",
     "start": "node ./dist/server.js",
     "prod": "npm run build && npm start",
-    "test": "NODE_ENV=test mocha -r ts-node/register lib/tests/**/*.spec.ts -i --exit"
+    "test": "mocha -r ts-node/register lib/tests/**/*.spec.ts --exit"
   },
   "author": "Aseel Al Dallal",
   "license": "ISC",
