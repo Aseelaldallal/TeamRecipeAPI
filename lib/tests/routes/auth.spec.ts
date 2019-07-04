@@ -1,21 +1,16 @@
 import app from '../../src/app';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import * as mongoose from 'mongoose';
 import { IUser } from 'src/models/user';
+import { Test } from '../TestInitializer';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-let mongoServer: MongoMemoryServer;
 let newUser: IUser;
 
 before(async () => {
-	mongoServer = new MongoMemoryServer();
-	const mongoUri = await mongoServer.getConnectionString();
-	await mongoose.connect(mongoUri, { useNewUrlParser: true });
-
+	await Test.start();
 	newUser = {
 		email: 'testuser@gmail.com',
 		password: 'password',
@@ -27,8 +22,7 @@ before(async () => {
 });
 
 after(() => {
-	mongoose.disconnect();
-	mongoServer.stop();
+	Test.end();
 });
 
 describe('POST /register', () => {
