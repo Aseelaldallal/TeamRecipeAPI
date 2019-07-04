@@ -27,7 +27,7 @@
     "dev": "ts-node ./lib/src/server.ts",
     "start": "node ./dist/server.js",
     "prod": "npm run build && npm start",
-    "test": "mocha -r ts-node/register lib/tests/**/*.spec.ts"
+    "test": "NODE_ENV=test mocha -r ts-node/register lib/tests/**/*.spec.ts -i --exit"
   },
   "author": "Aseel Al Dallal",
   "license": "ISC",
@@ -43,6 +43,7 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/mocha": "^5.2.5",
     "@types/mongodb": "^3.1.14",
+    "@types/mongodb-memory-server": "^1.8.0",
     "@types/mongoose": "^5.3.0",
     "@types/passport": "^0.4.7",
     "@types/passport-facebook": "^2.1.8",
@@ -52,6 +53,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
     "mocha": "^5.2.0",
+    "mongodb-memory-server": "^5.1.5",
     "nodemon": "^1.19.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
