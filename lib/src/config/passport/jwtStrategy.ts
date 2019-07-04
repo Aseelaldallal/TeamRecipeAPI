@@ -8,14 +8,11 @@ const jwtOptions = {
 	secretOrKey
 };
 
-export const JWTStrategy = new Strategy(
-	jwtOptions,
-	async (jwtPayload, next) => {
-		try {
-			const user = await User.findOne({ _id: jwtPayload.id });
-			next(null, user);
-		} catch (error) {
-			next(error);
-		}
+export const JWTStrategy = new Strategy(jwtOptions, async (jwtPayload, next) => {
+	try {
+		const user = await User.findOne({ _id: jwtPayload.id });
+		next(null, user);
+	} catch (error) {
+		next(error);
 	}
-);
+});
