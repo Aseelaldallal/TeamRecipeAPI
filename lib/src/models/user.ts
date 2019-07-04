@@ -2,15 +2,18 @@ import { Document, Model, model, Schema, HookNextFunction } from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
 import * as faker from 'faker';
 
-export interface IUserModel extends Document {
-	createdAt: Date;
-	updatedAt: Date;
+export interface IUser {
 	email: string;
 	password: string;
 	username: string;
 	firstname: string;
 	lastname: string;
 	address: string;
+}
+
+export interface IUserModel extends Document, IUser {
+	createdAt: Date;
+	updatedAt: Date;
 	generateHash: (password: string) => string;
 	validPassword: (password: string) => boolean;
 }
