@@ -6,9 +6,9 @@ import * as express from 'express';
 import 'express-async-errors';
 import { passport } from '../config/passport';
 import { Team, ITeam } from '../models/team';
-import { User, IUserModel } from '../models/user';
+import { User, IUserDocument } from '../models/user';
 import { CustomError } from '../shared/Error';
-import { Recipe } from 'src/models/recipe';
+import { Recipe } from '../models/recipe';
 
 export const router = express.Router();
 
@@ -32,8 +32,8 @@ router.post(
 		const team: ITeam = {
 			name: req.body.name,
 			admin: {
-				id: (req.user as IUserModel).id,
-				username: (req.user as IUserModel).username
+				id: (req.user as IUserDocument).id,
+				username: (req.user as IUserDocument).username
 			},
 			members: [],
 			recipes: []
