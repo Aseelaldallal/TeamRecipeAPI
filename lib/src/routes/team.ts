@@ -5,9 +5,10 @@
 import * as express from 'express';
 import 'express-async-errors';
 import { passport } from '../config/passport';
-import { Team, ITeamModel, ITeam } from '../models/team';
-import { IUserModel } from '../models/user';
+import { Team, ITeam } from '../models/team';
+import { User, IUserModel } from '../models/user';
 import { CustomError } from '../shared/Error';
+import { Recipe } from 'src/models/recipe';
 
 export const router = express.Router();
 
@@ -15,7 +16,7 @@ export const router = express.Router();
 /* --------------INDEX ROUTE------------ */
 /* ------------------------------------- */
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: express.Request, res: express.Response) => {
 	const teams = await Team.find();
 	res.json(teams);
 });
@@ -27,7 +28,7 @@ router.get('/', async (req, res) => {
 router.post(
 	'/new',
 	passport.authenticate('jwt', { session: false }),
-	async (req, res) => {
+	async (req: express.Request, res: express.Response) => {
 		const team: ITeam = {
 			name: req.body.name,
 			admin: {
@@ -55,32 +56,25 @@ router.get('/:id', async (req: express.Request, res: express.Response) => {
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
 
-// Logged in user can only edit team if he/she is admin
-// We can change the name of the team
-// We can change the admin of the team --> has to be a valid user
-// New admin has to be a valid user
-// New admin has to be part of team already
-// Must remove old admin and put him in team
-// Must remove new admin from team and put him in admin
-// We can add/remove team members
-// We can add/remove recipes
-router.put(
-	'/:id',
+// Change Admin
+router.patch(
+	'/:teamId/makeAdmin',
 	passport.authenticate('jwt', { session: false }),
 	async (req: express.Request, res: express.Response) => {
-		// User must be team admin
-		const team = await Team.findById(req.params.id);
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 403);
+		}
 		if (req.user.id !== team.admin.id) {
 			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
 		}
-		team.name = req.body.name;
-		team.members = req.body.members;
-		team.recipes = req.body.recipes;
-		// Handle Changing of Admins
-		if (req.body.admin && req.body.admin.id !== team.admin.id) {
+		const newAdmin = await User.findById(req.body.userId);
+		if (!newAdmin) {
+			throw new CustomError('BadRequest', `Cannot find user ${req.params.userId}`, 403);
+		}
+		if (newAdmin.id !== team.admin.id) {
 			// Ensure new admin is already part of team
 			const oldAdmin = team.admin;
-			const newAdmin = req.body.admin;
 			const adminInTeam = !!team.members.filter(member => member.id === newAdmin.id);
 			if (!adminInTeam) {
 				throw new CustomError('Forbidden', 'New Admin Must be Part of Team', 403);
@@ -90,8 +84,112 @@ router.put(
 			// Add old admin user him to members
 			team.members.push(oldAdmin);
 			// Make new admin user admin
-			team.admin = newAdmin;
+			team.admin = { id: newAdmin.id, username: newAdmin.username };
 		}
+		const updatedTeam = await team.save();
+		res.json(updatedTeam);
+	}
+);
+
+// Change Team Name
+router.patch(
+	'/:teamId/name',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 403);
+		}
+		if (req.user.id !== team.admin.id) {
+			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
+		}
+		team.name = req.body.name;
+		const updatedTeam = await team.save();
+		res.json(updatedTeam);
+	}
+);
+
+// Add Member
+router.patch(
+	'/:teamId/addMember',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 403);
+		}
+		if (req.user.id !== team.admin.id) {
+			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
+		}
+		const { member } = req.body;
+		const user = await User.findById(member.id);
+		if (!user) {
+			throw new CustomError('BadRequest', 'Can only add existing user to team', 400);
+		}
+		team.members.push(member);
+		const updatedTeam = await team.save();
+		res.json(updatedTeam);
+	}
+);
+
+// Remove Member
+router.patch(
+	'/:teamId/removeMember',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 403);
+		}
+		if (req.user.id !== team.admin.id) {
+			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
+		}
+		const memberToRemove = req.body.member;
+		const members = team.members.filter(member => member.id !== memberToRemove.id);
+		team.members = members;
+		const updatedTeam = await team.save();
+		res.json(updatedTeam);
+	}
+);
+
+// Add Recipe
+router.patch(
+	'/:teamId/addRecipe',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 400);
+		}
+		if (req.user.id !== team.admin.id) {
+			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
+		}
+		const { recipe } = req.body;
+		const recipeToAdd = await Recipe.findById(recipe.id);
+		if (!recipe) {
+			throw new CustomError('BadRequest', `Recipe ${recipe.id} does not exist`, 400);
+		}
+		team.recipes.push({ id: recipeToAdd.id, name: recipeToAdd.name });
+		const updatedTeam = await team.save();
+		res.json(updatedTeam);
+	}
+);
+
+// Remove Recipe
+router.patch(
+	'/:teamId/removeMember',
+	passport.authenticate('jwt', { session: false }),
+	async (req: express.Request, res: express.Response) => {
+		const team = await Team.findById(req.params.teamId);
+		if (!team) {
+			throw new CustomError('BadRequest', 'Team does not exist', 403);
+		}
+		if (req.user.id !== team.admin.id) {
+			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
+		}
+		const recipeToRemove = req.body.recipe;
+		const recipes = team.recipes.filter(member => member.id !== recipeToRemove.id);
+		team.recipes = recipes;
 		const updatedTeam = await team.save();
 		res.json(updatedTeam);
 	}
