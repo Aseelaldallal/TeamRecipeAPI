@@ -27,7 +27,7 @@ router.get('/', async (req: express.Request, res: express.Response) => {
 
 router.post(
 	'/new',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team: ITeam = {
 			name: req.body.name,

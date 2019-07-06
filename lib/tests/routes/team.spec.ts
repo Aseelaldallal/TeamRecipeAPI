@@ -38,6 +38,17 @@ describe('POST /new', () => {
 			.send({ name: 'BubbleGum Team' });
 		expect(response.body.name).to.equal('BubbleGum Team');
 	});
+
+	it('Should not allow an unauthenticated user to create a new team', async () => {
+		const response = await chai
+			.request(app)
+			.post('/team/new')
+			.type('form')
+			.send({ name: 'BubbleGum Team' });
+		expect(response.status).to.equal(401);
+		expect(response.body.error).to.equal('AuthenticationError');
+		expect(response.body.message).to.equal('Unauthorized');
+	});
 });
 
 // CREATE
