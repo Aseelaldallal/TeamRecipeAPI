@@ -1,4 +1,5 @@
 import app from '../../src/app';
+import * as decode from 'jwt-decode';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 import { User, IUser } from '../../src/models/user';
@@ -16,17 +17,18 @@ after(() => {
 });
 
 describe('POST /new', () => {
-	let adminUser: IUser;
+	let adminId: string;
 	let jwtToken: string;
 
 	before(async () => {
-		adminUser = User.createDummy();
+		const adminUser = User.createDummy();
 		const response = await chai
 			.request(app)
 			.post('/register')
 			.type('form')
 			.send(adminUser);
 		jwtToken = response.body.token;
+		adminId = (decode(jwtToken) as any).id;
 	});
 
 	it('Should allow an authenticated user to create a new team', async () => {
@@ -36,7 +38,8 @@ describe('POST /new', () => {
 			.set('Authorization', `Bearer ${jwtToken}`)
 			.type('form')
 			.send({ name: 'BubbleGum Team' });
-		expect(response.body.name).to.equal('BubbleGum Team');
+		expect(response.body.team).to.not.be.null;
+		expect(response.body.team.name).to.equal('BubbleGum Team');
 	});
 
 	it('Should not allow the creation of a team without a name', async () => {
@@ -53,7 +56,29 @@ describe('POST /new', () => {
 		expect(response.body.error.message[0]).to.equal('name is required');
 	});
 
-	// it('Should set the name ');
+	it('Should set the team name', async () => {
+		const response = await chai
+			.request(app)
+			.post('/team/new')
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send({ name: 'Little Ducks' });
+		expect(response.body.team).to.not.be.null;
+		expect(response.body.team.name).to.equal('Little Ducks');
+	});
+
+	it('Should set the team admin to authenticated user', async () => {
+		const response = await chai
+			.request(app)
+			.post('/team/new')
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send({ name: 'Little Ducks' });
+		expect(response.body.team).to.not.be.null;
+		expect(response.body.team.admin).to.include({
+			id: adminId
+		});
+	});
 
 	it('Should not allow an unauthenticated user to create a new team', async () => {
 		const response = await chai

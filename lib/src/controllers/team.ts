@@ -9,7 +9,7 @@ export const getTeam = async (req: express.Request, res: express.Response) => {
 };
 
 export const createTeam = async (req: express.Request, res: express.Response) => {
-	const team: ITeam = {
+	const newTeam: ITeam = {
 		name: req.body.name,
 		admin: {
 			id: (req.user as IUserDocument).id,
@@ -18,8 +18,8 @@ export const createTeam = async (req: express.Request, res: express.Response) =>
 		members: [],
 		recipes: []
 	};
-	const teamDocument = new Team(team);
-	res.status(200).json(await teamDocument.save());
+	const team = await new Team(newTeam).save();
+	res.status(200).json({ team });
 };
 
 export const validate = (methodName: string) => {
