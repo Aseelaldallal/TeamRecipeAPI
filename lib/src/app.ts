@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
-import { errors as celebrateErrors } from 'celebrate';
+import { isCelebrate } from 'celebrate';
 import { dbURL } from './config/database';
 
 import { router as teamRouter } from './routes/team';
@@ -19,7 +19,6 @@ class App {
 		this.connectToDB();
 		this.config();
 		this.routes();
-		this.app.use(celebrateErrors());
 		this.handleErrors();
 	}
 
@@ -54,12 +53,23 @@ class App {
 	private handleErrors() {
 		this.app.use(
 			(err: any, req: express.Request, res: express.Response, next: Function) => {
-				if (err.code) {
-					res.status(err.code).json({ error: err.name, message: err.message });
+				if (isCelebrate(err)) {
+					// Joi
+					const error = {
+						name: 'BadRequest',
+						type: 'ValidationError',
+						message: err.joi.details.map((errItem: any) =>
+							errItem.message.replace(/['"]+/g, '')
+						)
+					};
+					res.status(400).json({ error });
 				} else if (err.name === 'AuthenticationError') {
-					res.status(err.status).json({ error: err.name, message: err.message });
+					// Passport
+					res.status(err.status).json({ error: { name: err.message, type: err.name } });
 				} else if (err.name === 'ValidationError') {
 					res.status(400).json({ error: err.name, message: err.message });
+				} else if (err.code) {
+					res.status(err.code).json({ error: err.name, message: err.message });
 				} else {
 					res.status(500).json({ error: err.name, message: err.message });
 				}

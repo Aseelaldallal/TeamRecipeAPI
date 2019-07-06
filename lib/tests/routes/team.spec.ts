@@ -46,10 +46,14 @@ describe('POST /new', () => {
 			.set('Authorization', `Bearer ${jwtToken}`)
 			.type('form')
 			.send();
-		expect(response.body.name).to.equal('BubbleGum Team');
+		expect(response.status).to.equal(400);
+		expect(response.body.error.name).to.equal('BadRequest');
+		expect(response.body.error.type).to.equal('ValidationError');
+		expect(response.body.error.message).to.have.length(1);
+		expect(response.body.error.message[0]).to.equal('name is required');
 	});
 
-	it('Should set the name ');
+	// it('Should set the name ');
 
 	it('Should not allow an unauthenticated user to create a new team', async () => {
 		const response = await chai
@@ -58,8 +62,9 @@ describe('POST /new', () => {
 			.type('form')
 			.send({ name: 'BubbleGum Team' });
 		expect(response.status).to.equal(401);
-		expect(response.body.error).to.equal('AuthenticationError');
-		expect(response.body.message).to.equal('Unauthorized');
+		expect(response.body.error).to.not.be.null;
+		expect(response.body.error.type).to.equal('AuthenticationError');
+		expect(response.body.error.name).to.equal('Unauthorized');
 	});
 });
 
