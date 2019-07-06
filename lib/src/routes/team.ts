@@ -10,7 +10,6 @@ import { Team } from '../models/team';
 import { Recipe } from '../models/recipe';
 import { User } from '../models/user';
 import { CustomError } from '../shared/Error';
-import { celebrate, Joi } from 'celebrate';
 
 export const router = express.Router();
 
@@ -18,7 +17,7 @@ export const router = express.Router();
 /* --------------INDEX ROUTE------------ */
 /* ------------------------------------- */
 
-router.get('/', TeamController.getTeam);
+router.get('/', TeamController.getTeams);
 
 /* ------------------------------------- */
 /* -------------CREATE ROUTE------------ */
@@ -35,48 +34,17 @@ router.post(
 /* ---------------SHOW ROUTE------------ */
 /* ------------------------------------- */
 
-router.get('/:id', async (req: express.Request, res: express.Response) => {
-	const team = await Team.findById(req.params.id);
-	res.json(team);
-});
+router.get('/:id', TeamController.getTeam);
 
 /* ------------------------------------- */
 /* --------------UPDATE ROUTE----------- */
 /* ------------------------------------- */
 
-// Change Admin
 router.patch(
-	'/:teamId/makeAdmin',
+	'/:teamId/updateAdmin',
 	passport.authenticate('jwt', { session: false }),
-	async (req: express.Request, res: express.Response) => {
-		const team = await Team.findById(req.params.teamId);
-		if (!team) {
-			throw new CustomError('BadRequest', 'Team does not exist', 403);
-		}
-		if (req.user.id !== team.admin.id) {
-			throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
-		}
-		const newAdmin = await User.findById(req.body.userId);
-		if (!newAdmin) {
-			throw new CustomError('BadRequest', `Cannot find user ${req.params.userId}`, 403);
-		}
-		if (newAdmin.id !== team.admin.id) {
-			// Ensure new admin is already part of team
-			const oldAdmin = team.admin;
-			const adminInTeam = !!team.members.filter(member => member.id === newAdmin.id);
-			if (!adminInTeam) {
-				throw new CustomError('Forbidden', 'New Admin Must be Part of Team', 403);
-			}
-			// Remove new admin user from members
-			team.members = team.members.filter(member => member.id !== newAdmin.id);
-			// Add old admin user him to members
-			team.members.push(oldAdmin);
-			// Make new admin user admin
-			team.admin = { id: newAdmin.id, username: newAdmin.username };
-		}
-		const updatedTeam = await team.save();
-		res.json(updatedTeam);
-	}
+	// TeamController.validate('updateTeam'),
+	TeamController.updateAdmin
 );
 
 // Change Team Name
