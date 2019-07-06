@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
+import { errors as celebrateErrors } from 'celebrate';
 import { dbURL } from './config/database';
 
 import { router as teamRouter } from './routes/team';
@@ -18,6 +19,7 @@ class App {
 		this.connectToDB();
 		this.config();
 		this.routes();
+		this.app.use(celebrateErrors());
 		this.handleErrors();
 	}
 

@@ -10,6 +10,7 @@ import { Team } from '../models/team';
 import { Recipe } from '../models/recipe';
 import { User } from '../models/user';
 import { CustomError } from '../shared/Error';
+import { celebrate, Joi, errors } from 'celebrate';
 
 export const router = express.Router();
 
@@ -26,6 +27,11 @@ router.get('/', TeamController.getTeam);
 router.post(
 	'/new',
 	passport.authenticate('jwt', { session: false, failWithError: true }),
+	celebrate({
+		body: Joi.object().keys({
+			name: Joi.string().required()
+		})
+	}),
 	TeamController.createTeam
 );
 

@@ -39,7 +39,15 @@ describe('POST /new', () => {
 		expect(response.body.name).to.equal('BubbleGum Team');
 	});
 
-	it('Should set the team name on team creation', async () => {});
+	it('Should not allow the creation of a team without a name', async () => {
+		const response = await chai
+			.request(app)
+			.post('/team/new')
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send();
+		expect(response.body.name).to.equal('BubbleGum Team');
+	});
 
 	it('Should set the name ');
 
