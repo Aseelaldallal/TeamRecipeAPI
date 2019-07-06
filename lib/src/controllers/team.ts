@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { celebrate, Joi } from 'celebrate';
 import { Team, ITeam } from '../models/team';
 import { IUserDocument } from 'src/models/user';
 
@@ -19,4 +20,17 @@ export const createTeam = async (req: express.Request, res: express.Response) =>
 	};
 	const teamDocument = new Team(team);
 	res.status(200).json(await teamDocument.save());
+};
+
+export const validate = (methodName: string) => {
+	let schema: object;
+	switch (methodName) {
+		case 'createTeam':
+			schema = {
+				body: Joi.object().keys({
+					name: Joi.string().required()
+				})
+			};
+	}
+	return celebrate(schema, { abortEarly: false });
 };
