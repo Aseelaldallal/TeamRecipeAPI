@@ -5,10 +5,11 @@
 import * as express from 'express';
 import 'express-async-errors';
 import { passport } from '../config/passport';
+import * as TeamController from '../controllers/team';
 import { Team, ITeam } from '../models/team';
+import { Recipe } from '../models/recipe';
 import { User, IUserDocument } from '../models/user';
 import { CustomError } from '../shared/Error';
-import { Recipe } from '../models/recipe';
 
 export const router = express.Router();
 
@@ -16,10 +17,7 @@ export const router = express.Router();
 /* --------------INDEX ROUTE------------ */
 /* ------------------------------------- */
 
-router.get('/', async (req: express.Request, res: express.Response) => {
-	const teams = await Team.find();
-	res.json(teams);
-});
+router.get('/', TeamController.getTeam);
 
 /* ------------------------------------- */
 /* -------------CREATE ROUTE------------ */
