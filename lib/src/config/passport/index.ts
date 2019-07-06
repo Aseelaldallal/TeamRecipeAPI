@@ -1,10 +1,10 @@
 import * as Passport from 'passport';
-import { User, IUserModel } from '../../models/user';
+import { User, IUserDocument } from '../../models/user';
 import { JWTStrategy } from './jwtstrategy';
 import { localLogin, localRegister } from './localStrategy';
 
 function setupStrategies(passportToConfigure: Passport.PassportStatic) {
-	passportToConfigure.serializeUser((user: IUserModel, done) => {
+	passportToConfigure.serializeUser((user: IUserDocument, done) => {
 		done(null, { _id: user._id });
 	});
 

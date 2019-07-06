@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User, IUserModel } from '../../models/user';
+import { User, IUserDocument } from '../../models/user';
 import {
 	Strategy as LocalStrategy,
 	IVerifyOptions,
@@ -36,7 +36,7 @@ async function register(req: Request, email: string, password: string, done: IDo
 	}
 }
 
-async function createAndSaveUser(req: Request): Promise<IUserModel> {
+async function createAndSaveUser(req: Request): Promise<IUserDocument> {
 	const newUser = new User({
 		email: req.body.email,
 		password: req.body.password,
