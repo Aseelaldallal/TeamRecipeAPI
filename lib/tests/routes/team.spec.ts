@@ -39,6 +39,10 @@ describe('POST /new', () => {
 		expect(response.body.name).to.equal('BubbleGum Team');
 	});
 
+	it('Should set the team name on team creation', async () => {});
+
+	it('Should set the name ');
+
 	it('Should not allow an unauthenticated user to create a new team', async () => {
 		const response = await chai
 			.request(app)

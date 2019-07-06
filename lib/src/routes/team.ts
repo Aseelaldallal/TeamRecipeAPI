@@ -6,9 +6,9 @@ import * as express from 'express';
 import 'express-async-errors';
 import { passport } from '../config/passport';
 import * as TeamController from '../controllers/team';
-import { Team, ITeam } from '../models/team';
+import { Team } from '../models/team';
 import { Recipe } from '../models/recipe';
-import { User, IUserDocument } from '../models/user';
+import { User } from '../models/user';
 import { CustomError } from '../shared/Error';
 
 export const router = express.Router();
@@ -26,19 +26,7 @@ router.get('/', TeamController.getTeam);
 router.post(
 	'/new',
 	passport.authenticate('jwt', { session: false, failWithError: true }),
-	async (req: express.Request, res: express.Response) => {
-		const team: ITeam = {
-			name: req.body.name,
-			admin: {
-				id: (req.user as IUserDocument).id,
-				username: (req.user as IUserDocument).username
-			},
-			members: [],
-			recipes: []
-		};
-		const teamDocument = new Team(team);
-		res.status(200).json(await teamDocument.save());
-	}
+	TeamController.createTeam
 );
 
 /* ------------------------------------- */
