@@ -15,9 +15,13 @@ export interface ITeam {
 		name: string;
 	}>;
 }
-export interface ITeamModel extends ITeam, Document {
+export interface ITeamDocument extends Document, ITeam {
 	createdAt: Date;
 	updatedAt: Date;
+}
+
+export interface ITeamModel extends Model<ITeamDocument> {
+	// Stub
 }
 
 const TeamSchema: Schema = new Schema(
@@ -54,8 +58,4 @@ const TeamSchema: Schema = new Schema(
 	{ timestamps: true }
 );
 
-// prior to save check that admin is a valid user
-// check that members are valid users
-// check that recipes are valid recipes
-
-export const Team: Model<ITeamModel> = model<ITeamModel>('Team', TeamSchema);
+export const Team: ITeamModel = model<ITeamDocument, ITeamModel>('Team', TeamSchema);
