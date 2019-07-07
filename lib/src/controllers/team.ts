@@ -2,7 +2,7 @@ import { celebrate, Joi } from 'celebrate';
 import * as express from 'express';
 import { IUserDocument, User } from '../models/user';
 import { ITeam, Team } from '../models/team';
-import { CustomError } from '../shared/Error';
+import { CustomError, CustomError2 } from '../shared/Error';
 
 /* --------------------------------------------------------- */
 /* --------------------- ROUTE METHODS --------------------- */
@@ -60,9 +60,9 @@ export const updateAdmin = async (req: express.Request, res: express.Response) =
 	if (req.user.id !== team.admin.id) {
 		throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
 	}
-	const newAdmin = await User.findById(req.body.userId);
+	const newAdmin = await User.findById(req.body.newAdminId);
 	if (!newAdmin) {
-		throw new CustomError('BadRequest', `Cannot find user ${req.params.userId}`, 403);
+		throw new CustomError('BadRequest', `Cannot find user ${req.body.newAdminId}`, 403);
 	}
 	if (newAdmin.id !== team.admin.id) {
 		// Ensure new admin is already part of team
@@ -111,6 +111,27 @@ export const validate = (methodName: string) => {
 	return celebrate(schema, { abortEarly: false });
 };
 
+/* --------------------------------------------------------- */
+/* ----------------------- POPULATION ---------------------- */
+/* --------------------------------------------------------- */
+
+export const populateTeam = async (
+	req: express.Request,
+	res: express.Response,
+	next: Function
+) => {
+	const team = await Team.findById(req.params.teamId);
+	if (!team) {
+		throw new CustomError2(
+			'BadRequest',
+			'InvalidParams',
+			`Team ${req.params.teamId} does not exist`,
+			400
+		);
+	}
+	res.locals.team = team;
+	next();
+};
 /* --------------------------------------------------------- */
 /* ------------------------- HELPER ------------------------ */
 /* --------------------------------------------------------- */

@@ -44,6 +44,7 @@ router.patch(
 	'/:teamId/updateAdmin',
 	passport.authenticate('jwt', { session: false, failWithError: true }),
 	TeamController.validate('updateAdmin'),
+	TeamController.populateTeam,
 	TeamController.updateAdmin
 );
 

@@ -69,7 +69,9 @@ class App {
 				} else if (err.name === 'ValidationError') {
 					res.status(400).json({ error: err.name, message: err.message });
 				} else if (err.code) {
-					res.status(err.code).json({ error: err.name, message: err.message });
+					res
+						.status(err.code)
+						.json({ error: { name: err.name, type: err.type, message: err.message } });
 				} else {
 					res.status(500).json({ error: err.name, message: err.message });
 				}

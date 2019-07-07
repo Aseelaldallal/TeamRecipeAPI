@@ -2,7 +2,7 @@ import app from '../../src/app';
 import * as decode from 'jwt-decode';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
-import { User } from '../../src/models/user';
+import { User, IUser, IUserDocument } from '../../src/models/user';
 import { Test } from '../TestInitializer';
 import { Team, ITeamDocument } from '../../src/models/team';
 
@@ -98,12 +98,15 @@ describe('POST /new', () => {
 describe('PATCH /:teamId/updateAdmin', () => {
 	let jwtToken: string;
 	let team: ITeamDocument;
+	let admin: IUserDocument;
+	let memberA: IUserDocument;
+	let memberB: IUserDocument;
 
 	before(async () => {
 		// Create Team Members
-		const admin = await new User(User.createDummy()).save();
-		const memberA = await new User(User.createDummy()).save();
-		const memberB = await new User(User.createDummy()).save();
+		admin = await new User(User.createDummy()).save();
+		memberA = await new User(User.createDummy()).save();
+		memberB = await new User(User.createDummy()).save();
 		// Login Admin to get token
 		const response = await chai
 			.request(app)
@@ -137,24 +140,39 @@ describe('PATCH /:teamId/updateAdmin', () => {
 			.send();
 		expect(response.status).to.equal(401);
 		expect(response.body.error).to.be.an('object').that.is.not.empty;
-		expect(response.body.error).to.not.be.null;
 		expect(response.body.error.type).to.equal('AuthenticationError');
 		expect(response.body.error.name).to.equal('Unauthorized');
 	});
 
-	// it('Should return an error if body is missing newAdminId', async () => {
-	// 	const response = await chai
-	// 		.request(app)
-	// 		.post('/team/new')
-	// 		.set('Authorization', `Bearer ${jwtToken}`)
-	// 		.type('form')
-	// 		.send();
-	// 	expect(response.status).to.equal(400);
-	// 	expect(response.body.error.name).to.equal('BadRequest');
-	// 	expect(response.body.error.type).to.equal('ValidationError');
-	// 	expect(response.body.error.message).to.have.length(1);
-	// 	expect(response.body.error.message[0]).to.equal('name is required');
-	// });
+	it('Should return an error if body is missing newAdminId', async () => {
+		const response = await chai
+			.request(app)
+			.patch(`/team/${team.id}/updateAdmin`)
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send();
+		expect(response.status).to.equal(400);
+		expect(response.body.error.name).to.equal('BadRequest');
+		expect(response.body.error.type).to.equal('ValidationError');
+		expect(response.body.error.message).to.have.length(1);
+		expect(response.body.error.message[0]).to.equal('newAdminId is required');
+	});
+
+	it('Should return BadRequest if team does not exist', async () => {
+		const response = await chai
+			.request(app)
+			.patch(`/team/5d2141d9ded5aa48a87a4f38/updateAdmin`)
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send({ newAdminId: memberA.id });
+		expect(response.status).to.equal(400);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
+		expect(response.body.error.name).to.equal('BadRequest');
+		expect(response.body.error.type).to.equal('InvalidParams');
+		expect(response.body.error.message).to.equal(
+			'Team 5d2141d9ded5aa48a87a4f38 does not exist'
+		);
+	});
 });
 
 // UPDATE
