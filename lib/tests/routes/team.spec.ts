@@ -186,12 +186,30 @@ describe('PATCH /:teamId/updateAdmin', () => {
 			'Team 5d2141d9ded5aa48a87a4f38 does not exist'
 		);
 	});
-});
 
-// UPDATE
-// Unauthenticated users cannot update team
-// Only team admin can edit team
-// New admin must be a member
-// Switching admin replaces new admin, moves him to members, removes new admin from members
-// Changing team members only changes team members only
-// Changing
+	// Member A will try to set themself to team admin
+	it('Should only allow team admin to edit team', async () => {
+		// Let Member A Login to get token
+		const loginResponse = await chai
+			.request(app)
+			.post('/login')
+			.type('form')
+			.send({
+				email: memberA.email,
+				password: 'password'
+			});
+		jwtToken = loginResponse.body.token;
+		// Try to updateAdmin with member A token
+		const response = await chai
+			.request(app)
+			.patch(`/team/${team.id}/updateAdmin`)
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send({ newAdminId: memberA.id });
+		expect(response.status).to.equal(403);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
+		expect(response.body.error.name).to.equal('Forbidden');
+		expect(response.body.error.type).to.equal('AuthorizationError');
+		expect(response.body.error.message).to.equal('Only Team Admin can edit team');
+	});
+});

@@ -53,13 +53,8 @@ export const createTeam = async (req: express.Request, res: express.Response) =>
  * @param {express.Response} res
  */
 export const updateAdmin = async (req: express.Request, res: express.Response) => {
-	const team = await Team.findById(req.params.teamId);
-	if (!team) {
-		throw new CustomError('BadRequest', 'Team does not exist', 403);
-	}
-	if (req.user.id !== team.admin.id) {
-		throw new CustomError('Forbidden', 'Only Team Admin can edit team', 403);
-	}
+	const { team } = res.locals;
+
 	const newAdmin = await User.findById(req.body.newAdminId);
 	if (!newAdmin) {
 		throw new CustomError('BadRequest', `Cannot find user ${req.body.newAdminId}`, 403);
@@ -118,6 +113,12 @@ export const validate = (methodName: string) => {
 /* ----------------------- POPULATION ---------------------- */
 /* --------------------------------------------------------- */
 
+/**
+ * Stores team teamId in res.locals
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {Function} next
+ */
 export const populateTeam = async (
 	req: express.Request,
 	res: express.Response,
@@ -135,6 +136,27 @@ export const populateTeam = async (
 	res.locals.team = team;
 	next();
 };
+
+/* --------------------------------------------------------- */
+/* -------------------------- OTHER ------------------------ */
+/* --------------------------------------------------------- */
+
+export const verifyAuthenticatedUserIsTeamAdmin = async (
+	req: express.Request,
+	res: express.Response,
+	next: Function
+) => {
+	if (req.user.id !== res.locals.team.admin.id) {
+		throw new CustomError2(
+			'Forbidden',
+			'AuthorizationError',
+			'Only Team Admin can edit team',
+			403
+		);
+	}
+	next();
+};
+
 /* --------------------------------------------------------- */
 /* ------------------------- HELPER ------------------------ */
 /* --------------------------------------------------------- */
