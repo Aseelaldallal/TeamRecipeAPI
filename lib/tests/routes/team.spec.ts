@@ -158,6 +158,19 @@ describe('PATCH /:teamId/updateAdmin', () => {
 		expect(response.body.error.message[0]).to.equal('newAdminId is required');
 	});
 
+	it('Should return BadRequest if teamId is an invalid objectID', async () => {
+		const response = await chai
+			.request(app)
+			.patch(`/team/5d214138/updateAdmin`)
+			.set('Authorization', `Bearer ${jwtToken}`)
+			.type('form')
+			.send({ newAdminId: memberA.id });
+		expect(response.status).to.equal(400);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
+		expect(response.body.error.name).to.equal('BadRequest');
+		expect(response.body.error.type).to.equal('ValidationError');
+	});
+
 	it('Should return BadRequest if team does not exist', async () => {
 		const response = await chai
 			.request(app)
