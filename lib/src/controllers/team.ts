@@ -105,6 +105,9 @@ export const validate = (methodName: string) => {
 			schema = {
 				body: Joi.object().keys({
 					newAdminId: Joi.string().required()
+				}),
+				params: Joi.object().keys({
+					teamId: require('joi-objectid')(Joi)()
 				})
 			};
 	}
