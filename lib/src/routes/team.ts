@@ -42,15 +42,15 @@ router.get('/:id', TeamController.getTeam);
 
 router.patch(
 	'/:teamId/updateAdmin',
-	passport.authenticate('jwt', { session: false }),
-	// TeamController.validate('updateTeam'),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
+	TeamController.validate('updateAdmin'),
 	TeamController.updateAdmin
 );
 
 // Change Team Name
 router.patch(
 	'/:teamId/name',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team = await Team.findById(req.params.teamId);
 		if (!team) {
@@ -68,7 +68,7 @@ router.patch(
 // Add Member
 router.patch(
 	'/:teamId/addMember',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team = await Team.findById(req.params.teamId);
 		if (!team) {
@@ -91,7 +91,7 @@ router.patch(
 // Remove Member
 router.patch(
 	'/:teamId/removeMember',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team = await Team.findById(req.params.teamId);
 		if (!team) {
@@ -111,7 +111,7 @@ router.patch(
 // Add Recipe
 router.patch(
 	'/:teamId/addRecipe',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team = await Team.findById(req.params.teamId);
 		if (!team) {
@@ -134,7 +134,7 @@ router.patch(
 // Remove Recipe
 router.patch(
 	'/:teamId/removeMember',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false, failWithError: true }),
 	async (req: express.Request, res: express.Response) => {
 		const team = await Team.findById(req.params.teamId);
 		if (!team) {

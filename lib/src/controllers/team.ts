@@ -100,12 +100,13 @@ export const validate = (methodName: string) => {
 					name: Joi.string().required()
 				})
 			};
-		// case 'updateAdmin':
-		// 	schema = {
-		// 		body: Joi.object().keys({
-		// 			newAdminId: Joi.string().required()
-		// 		})
-		// 	};
+			break;
+		case 'updateAdmin':
+			schema = {
+				body: Joi.object().keys({
+					newAdminId: Joi.string().required()
+				})
+			};
 	}
 	return celebrate(schema, { abortEarly: false });
 };

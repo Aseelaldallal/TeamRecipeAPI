@@ -2,8 +2,9 @@ import app from '../../src/app';
 import * as decode from 'jwt-decode';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
-import { User, IUser } from '../../src/models/user';
+import { User } from '../../src/models/user';
 import { Test } from '../TestInitializer';
+import { Team, ITeamDocument } from '../../src/models/team';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
@@ -42,6 +43,18 @@ describe('POST /new', () => {
 		expect(response.body.team.name).to.equal('BubbleGum Team');
 	});
 
+	it('Should not allow an unauthenticated user to create a new team', async () => {
+		const response = await chai
+			.request(app)
+			.post('/team/new')
+			.type('form')
+			.send({ name: 'BubbleGum Team' });
+		expect(response.status).to.equal(401);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
+		expect(response.body.error.type).to.equal('AuthenticationError');
+		expect(response.body.error.name).to.equal('Unauthorized');
+	});
+
 	it('Should not allow the creation of a team without a name', async () => {
 		const response = await chai
 			.request(app)
@@ -50,6 +63,7 @@ describe('POST /new', () => {
 			.type('form')
 			.send();
 		expect(response.status).to.equal(400);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
 		expect(response.body.error.name).to.equal('BadRequest');
 		expect(response.body.error.type).to.equal('ValidationError');
 		expect(response.body.error.message).to.have.length(1);
@@ -63,7 +77,7 @@ describe('POST /new', () => {
 			.set('Authorization', `Bearer ${jwtToken}`)
 			.type('form')
 			.send({ name: 'Little Ducks' });
-		expect(response.body.team).to.not.be.null;
+		expect(response.body.team).to.be.an('object').that.is.not.empty;
 		expect(response.body.team.name).to.equal('Little Ducks');
 	});
 
@@ -74,29 +88,74 @@ describe('POST /new', () => {
 			.set('Authorization', `Bearer ${jwtToken}`)
 			.type('form')
 			.send({ name: 'Little Ducks' });
-		expect(response.body.team).to.not.be.null;
+		expect(response.body.team).to.be.an('object').that.is.not.empty;
 		expect(response.body.team.admin).to.include({
 			id: adminId
 		});
 	});
+});
 
-	it('Should not allow an unauthenticated user to create a new team', async () => {
+describe('PATCH /:teamId/updateAdmin', () => {
+	let jwtToken: string;
+	let team: ITeamDocument;
+
+	before(async () => {
+		// Create Team Members
+		const admin = await new User(User.createDummy()).save();
+		const memberA = await new User(User.createDummy()).save();
+		const memberB = await new User(User.createDummy()).save();
+		// Login Admin to get token
 		const response = await chai
 			.request(app)
-			.post('/team/new')
+			.post('/login')
 			.type('form')
-			.send({ name: 'BubbleGum Team' });
+			.send({
+				email: admin.email,
+				password: 'password'
+			});
+		jwtToken = response.body.token;
+		// Create Team
+		team = await new Team({
+			name: 'Team',
+			admin: {
+				id: admin.id,
+				username: admin.username
+			},
+			members: [
+				{ id: memberA.id, username: memberA.username },
+				{ id: memberB.id, username: memberB.username }
+			],
+			recipes: []
+		}).save();
+	});
+
+	it('Should not allow an unauthenticated user to update Admin', async () => {
+		const response = await chai
+			.request(app)
+			.patch(`/team/${team.id}/updateAdmin`)
+			.type('form')
+			.send();
 		expect(response.status).to.equal(401);
+		expect(response.body.error).to.be.an('object').that.is.not.empty;
 		expect(response.body.error).to.not.be.null;
 		expect(response.body.error.type).to.equal('AuthenticationError');
 		expect(response.body.error.name).to.equal('Unauthorized');
 	});
-});
 
-// CREATE
-// Unauthenticated users cannot create team
-// Authenticated users can create team
-// Authenticated user creates team where they're admin and the rest is empty
+	// it('Should return an error if body is missing newAdminId', async () => {
+	// 	const response = await chai
+	// 		.request(app)
+	// 		.post('/team/new')
+	// 		.set('Authorization', `Bearer ${jwtToken}`)
+	// 		.type('form')
+	// 		.send();
+	// 	expect(response.status).to.equal(400);
+	// 	expect(response.body.error.name).to.equal('BadRequest');
+	// 	expect(response.body.error.type).to.equal('ValidationError');
+	// 	expect(response.body.error.message).to.have.length(1);
+	// 	expect(response.body.error.message[0]).to.equal('name is required');
+	// });
+});
 
 // UPDATE
 // Unauthenticated users cannot update team
